@@ -4,6 +4,8 @@ import item, character
 SMALL_HEART_HEALTH = 25
 LARGE_HEART_HEALTH = 100
 
+VACUUM_BASE_DAMAGE = 15
+
 
 # This class represents the main character in the game.
 # This class extends the character class.
@@ -46,18 +48,21 @@ class luigi(character):
         print("  Large Armor: " + str(self.inventory["armor"]["largeArmor"]))
 
     # Separate function for adding health to Luigi.
-    # Items that heal luigi will call this function to add health to him.
+    # Items that heal luigi will call this function to add health.
     def addHealth(self, amount):
         self.health = self.health + amount
         if self.health > 100:
             self.health = 100
 
-    def removeHealth(self, amount):
+    def takeDamage(self, amount):
         self.health = self.health - amount
         if self.health < 0:
-            # Investigate if we can tie health to the game state
+            # TO-DO: Investigate if we can tie health to the game state
             # (i.e. if health is zero, then the game ends.)
             self.health = 0
+
+    def vacuumAttack(self, enemy):
+        ...# TO-DO: Implement vacuum attack functionality here
 
     def useSmallHeart(self):
         if self.inventory["hearts"]["smallHearts"] >= 1:
