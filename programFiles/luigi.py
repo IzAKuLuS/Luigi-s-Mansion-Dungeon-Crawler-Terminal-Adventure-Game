@@ -36,7 +36,7 @@ class luigi(character):
         else:
             print("Item type not recognized. Item not added to inventory.")
 
-    def displayInventory(self):
+    def getInventory(self):
         print("Inventory:")
         print("Hearts:")
         print("  Small Hearts: " + str(self.inventory["hearts"]["smallHearts"]))
@@ -73,9 +73,31 @@ class luigi(character):
         else:
             print("No large hearts in inventory.")
 
-    
 
     # Before implementing armor functions, we should investigate how we want armor to work in this game.
+    def useSmallArmor(self):
+        ... # TO-DO: Implement small armor functionality here
+
+    def useLargeArmor(self):
+        ... # TO-DO: Implement large armor functionality here        
+
+    def useItem(self):
+        itemType = input("Choose an item to use: (1) Small Heart, (2) Large Heart, (3) Small Armor, (4) Large Armor\n")
+        if itemType == "1":
+            self.useSmallHeart()
+        elif itemType == "2":
+            self.useLargeHeart()
+        elif itemType == "3":
+            self.useSmallArmor()
+        elif itemType == "4":
+            self.useLargeArmor()
+        else:
+            print("Invalid input. Please try again.")
+        
+
+    
+
+    
 
 
 
