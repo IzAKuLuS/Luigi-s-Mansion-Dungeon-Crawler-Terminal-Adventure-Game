@@ -1,6 +1,6 @@
 
 
-
+import item
 
 
 
@@ -10,19 +10,27 @@
 # Inventory consists of a dictionary of dictionaries. Each sub dictionary holds specific items within the larger dictionary
 # Skill represents a number that is used to determine the amount of damage one can do. 
 class character:
-    def __init__(self, name, health, inventory, skill):
+    def __init__(self, name, health, skill):
         self.name = name
         self.health = health
-        self.inventory = {
-
-                "hearts": {
-                    
-                    },
-                "armor": {
-
-                    }
-
-                }
         self.skill = skill
+
+    def setName(self, name):
+        self.name = name
+
+    def setHealth(self, hp):
+        self.health = hp
+
+    def setSkill(self, skill):
+        self.skill = skill
+
+    def getName(self):
+        return self.name
+
+    def getHealth(self):
+        return self.health
+
+    def getSkill(self):
+        return self.skill
 
 
