@@ -1,4 +1,9 @@
 
+# This is the luigi class.
+# The luigi class extends the character class
+# The luigi class adds an inventory to the character class that allows luigi to obtain/store items.
+# The inventory is a dictionary that contains two dictionaries: one for hearts and one for armor.
+
 import item, character
 
 SMALL_HEART_HEALTH = 25
@@ -87,18 +92,18 @@ class luigi(character):
         ... # TO-DO: Implement large armor functionality here        
 
     def useItem(self):
-        itemType = input("Choose an item to use: (1) Small Heart, (2) Large Heart, (3) Small Armor, (4) Large Armor\n")
-        if itemType == "1":
+        self.getInventory();
+        chosenItem = input("Please choose an item to use: \n1) Small Heart \n2) Large Heart \n3) Small Armor \n4) Large Armor: ")
+        if chosenItem == "1":
             self.useSmallHeart()
-        elif itemType == "2":
+        elif chosenItem == "2":
             self.useLargeHeart()
-        elif itemType == "3":
+        elif chosenItem == "3":
             self.useSmallArmor()
-        elif itemType == "4":
+        elif chosenItem == "4":
             self.useLargeArmor()
         else:
-            print("Invalid input. Please try again.")
-        
+            print("Invalid choice. Please try again.")
 
     
 

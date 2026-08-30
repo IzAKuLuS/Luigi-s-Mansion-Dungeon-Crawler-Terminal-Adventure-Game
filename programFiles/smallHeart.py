@@ -8,5 +8,4 @@ import item
 
 class smallHeart(item):
     def __init__(self):
-        super().__init__("Small Heart", "This is a small heart. It heals 25 health.", "smallHeart");
-        self.healingAmount = SMALL_HEART_HEALTH
+        super().__init__("Small Heart", "This is a small heart. It heals 25 health.", "smallHeart", SMALL_HEART_HEALTH)

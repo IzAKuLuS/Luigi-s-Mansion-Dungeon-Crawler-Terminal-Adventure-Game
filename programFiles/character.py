@@ -2,7 +2,7 @@
 
 
 # This class represents a character.
-# Each character contains within it a name, a health level, an inventory, and a skill.
+# Each character contains within it a name, a health level, and a skill.
 # Name and health are self explanatory (I hope...)
 # Skill represents a number that is used to determine the amount of damage one can do. 
 class character:

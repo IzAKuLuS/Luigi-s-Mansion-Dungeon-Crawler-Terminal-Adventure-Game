@@ -1,4 +1,8 @@
-
+# This is the purplePuncher class.
+# The purplePuncher class extends the ghost class.
+# The purplePuncher is stronger than the goldGhost as it has two attacks: softPunch and hardPunch.
+# softPunch is a weaker attack that does less damage than hardPunch (but more than the goldGhost's attack).
+# hardPunch is a stronger attack that does more damage than softPunch.
 
 import ghost, random
 
