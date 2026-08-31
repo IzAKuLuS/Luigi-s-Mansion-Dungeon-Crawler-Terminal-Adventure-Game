@@ -2,6 +2,13 @@
 
 import luigi
 
+SMALL_HEART_HEALTH = 25
+LARGE_HEART_HEALTH = 100
+
+SMALL_ARMOR_VALUE = 1
+LARGE_ARMOR_VALUE = 3
+
+
 def placeInSlot(luigi, item):
     if item.itemType == "smallHeart":
         for i in range(len(luigi.inventory["hearts"]["smallHearts"])):
@@ -34,3 +41,4 @@ def placeInSlot(luigi, item):
         
     else:
         print("Invalid item type.")
+

@@ -67,55 +67,10 @@ class luigi(character):
     def vacuumAttack(self, enemy):
         ...# TO-DO: Implement vacuum attack functionality here
 
-    def useSmallHeart(self):
-        if self.inventory["hearts"]["smallHearts"] >= 1:
-            self.addHealth(SMALL_HEART_HEALTH)
-            self.inventory["hearts"]["smallHearts"] = self.inventory["hearts"]["smallHearts"] - 1
-        else:
-            print("No small hearts in inventory.")
+    def useItem(self, item):
+        ...# TO-DO: Implement item usage functionality here
 
-    def useLargeHeart(self):
-        if self.inventory["hearts"]["largeHearts"] >= 1:
-            self.addHealth(LARGE_HEART_HEALTH)
-            self.inventory["hearts"]["largeHearts"] = self.inventory["hearts"]["largeHearts"] - 1
-        else:
-            print("No large hearts in inventory.")
-
-
-    # Before implementing armor functions, we should investigate how we want armor to work in this game.
-    def useSmallArmor(self):
-        if self.inventory["armor"]["smallArmor"] >= 1:
-            # Equip one small armor to luigi's armor attribute
-            self.armor = self.armor + SMALL_ARMOR_VALUE
-
-            # Remove one small armor from the inventory
-            self.inventory["armor"]["smallArmor"] = self.inventory["armor"]["smallArmor"] - 1
-        else:
-            print("No small armor in inventory.")
-
-    def useLargeArmor(self):
-        if self.inventory["armor"]["largeArmor"] >= 1:
-            # Equip one large armor to luigi's armor attribute
-            self.armor = self.armor + LARGE_ARMOR_VALUE
-
-            # Remove one large armor from the inventory
-            self.inventory["armor"]["largeArmor"] = self.inventory["armor"]["largeArmor"] - 1
-        else:
-            print("No large armor in inventory.")
-
-    def useItem(self):
-        self.getInventory();
-        chosenItem = input("Please choose an item to use: \n1) Small Heart \n2) Large Heart \n3) Small Armor \n4) Large Armor: ")
-        if chosenItem == "1":
-            self.useSmallHeart()
-        elif chosenItem == "2":
-            self.useLargeHeart()
-        elif chosenItem == "3":
-            self.useSmallArmor()
-        elif chosenItem == "4":
-            self.useLargeArmor()
-        else:
-            print("Invalid choice. Please try again.")
+    # TO-DO: Implement functions that use the item from the inventory and add to the attributes on luigi
 
     
 
