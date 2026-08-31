@@ -30,6 +30,7 @@ class luigi(character):
                                             "largeArmor": 0
                                         }
                         }
+        self.armor = 0;
 
     def addToInventory(self, item):
         if item.itemType == "smallHeart":
