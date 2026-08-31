@@ -11,6 +11,11 @@ LARGE_HEART_HEALTH = 100
 
 VACUUM_BASE_DAMAGE = 15
 
+SMALL_ARMOR_VALUE = 1
+LARGE_ARMOR_VALUE = 3
+
+ITEM_ARRAY_SIZE = 3
+
 
 # This class represents the main character in the game.
 # This class extends the character class.
@@ -22,13 +27,13 @@ class luigi(character):
         super().__init__("Luigi", 100, 1)
         self.inventory = {
                             "hearts":   {
-                                            "smallHearts": 0,
-                                            "largeHearts": 0
+                                            "smallHearts": [None] * ITEM_ARRAY_SIZE,
+                                            "largeHearts": [None] * ITEM_ARRAY_SIZE
                                         },
 
                             "armor":    {
-                                            "smallArmor": 0,
-                                            "largeArmor": 0
+                                            "smallArmor": [None] * ITEM_ARRAY_SIZE,
+                                            "largeArmor": [None] * ITEM_ARRAY_SIZE
                                         }
                         }
         self.armor = 0
@@ -88,10 +93,24 @@ class luigi(character):
 
     # Before implementing armor functions, we should investigate how we want armor to work in this game.
     def useSmallArmor(self):
-        ... # TO-DO: Implement small armor functionality here
+        if self.inventory["armor"]["smallArmor"] >= 1:
+            # Equip one small armor to luigi's armor attribute
+            self.armor = self.armor + SMALL_ARMOR_VALUE
+
+            # Remove one small armor from the inventory
+            self.inventory["armor"]["smallArmor"] = self.inventory["armor"]["smallArmor"] - 1
+        else:
+            print("No small armor in inventory.")
 
     def useLargeArmor(self):
-        ... # TO-DO: Implement large armor functionality here        
+        if self.inventory["armor"]["largeArmor"] >= 1:
+            # Equip one large armor to luigi's armor attribute
+            self.armor = self.armor + LARGE_ARMOR_VALUE
+
+            # Remove one large armor from the inventory
+            self.inventory["armor"]["largeArmor"] = self.inventory["armor"]["largeArmor"] - 1
+        else:
+            print("No large armor in inventory.")
 
     def useItem(self):
         self.getInventory();
