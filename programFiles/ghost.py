@@ -10,4 +10,3 @@ class ghost(character):
         self.numAttacks = numAttacks
 
 
-#sadl;kfkl;ajsd;ljkfasdfasdf
