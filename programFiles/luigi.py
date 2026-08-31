@@ -4,7 +4,7 @@
 # The luigi class adds an inventory to the character class that allows luigi to obtain/store items.
 # The inventory is a dictionary that contains two dictionaries: one for hearts and one for armor.
 
-import item, character
+import item, character, luigi_funcs
 
 SMALL_HEART_HEALTH = 25
 LARGE_HEART_HEALTH = 100
@@ -39,16 +39,7 @@ class luigi(character):
         self.armor = 0
 
     def addToInventory(self, item):
-        if item.itemType == "smallHeart":
-            self.inventory["hearts"]["smallHearts"] = self.inventory["hearts"]["smallHearts"] + 1
-        elif item.itemType == "largeHeart":
-            self.inventory["hearts"]["largeHearts"] = self.inventory["hearts"]["largeHearts"] + 1
-        elif item.itemType == "smallArmor":
-            self.inventory["armor"]["smallArmor"] = self.inventory["armor"]["smallArmor"] + 1
-        elif item.itemType == "largeArmor":
-            self.inventory["armor"]["largeArmor"] = self.inventory["armor"]["largeArmor"] + 1
-        else:
-            print("Item type not recognized. Item not added to inventory.")
+        luigi_funcs.placeInSlot(self, item)
 
     def getInventory(self):
         print("Inventory:")
