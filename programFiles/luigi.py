@@ -14,7 +14,8 @@ VACUUM_BASE_DAMAGE = 15
 
 # This class represents the main character in the game.
 # This class extends the character class.
-# The addition to this class is an inventory that allows Luigi to obtain/store items.
+# This class adds an inventory that Luigi can use to obtain/store items.
+# This class also adds an armor attribute that allows luigi to shield themselves from damage.
 class luigi(character):
     
     def __init__(self):
@@ -30,7 +31,7 @@ class luigi(character):
                                             "largeArmor": 0
                                         }
                         }
-        self.armor = 0;
+        self.armor = 0
 
     def addToInventory(self, item):
         if item.itemType == "smallHeart":
