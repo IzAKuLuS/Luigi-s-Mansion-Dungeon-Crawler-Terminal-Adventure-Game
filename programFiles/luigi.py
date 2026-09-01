@@ -68,7 +68,10 @@ class luigi(character):
         ...# TO-DO: Implement vacuum attack functionality here
 
     def useItem(self, item):
-        ...# TO-DO: Implement item usage functionality here
+        if (item.type == "heart"):
+            self.addHealth(item.value)
+        elif (item.type == "armor"):
+            self.armor = self.armor + item.value
 
     # TO-DO: Implement functions that use the item from the inventory and add to the attributes on luigi
 
