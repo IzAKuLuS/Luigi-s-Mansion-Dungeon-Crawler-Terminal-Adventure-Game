@@ -1,272 +1,341 @@
-"""Save and load complete Luigi's Mansion game instances as JSON.
+"""Menu and JSON save-file helpers for the terminal adventure game."""
 
-The public functions in this module are ``save_game`` and ``load_game``.
-Unless a different path is supplied, both functions use ``game_saves.json``.
-"""
-
-import importlib
+from datetime import datetime, timezone
 import json
-import os
 from pathlib import Path
 
+from game import game
+from character import character
+from luigi import luigi
+from mario import mario
+from level import level
+from room import room
+from ghost import ghost
+from goldGhost import goldGhost
+from purplePuncher import purplePuncher
+from item import item
+from smallHeart import smallHeart
+from largeHeart import largeHeart
+from smallArmor import smallArmor
+from largeArmor import largeArmor
 
-SAVE_FILE = "game_saves.json"
-SAVE_FORMAT = "luigis-mansion-game-save"
-SAVE_VERSION = 1
+
+SAVE_FILE = Path(__file__).with_name("game_saves.json")
 
 
-# Only classes that belong to this game may be reconstructed from a save file.
-# Add a new class here if a new kind of object is later stored in a Game.
-_CLASS_LOCATIONS = {
-    "game": ("game", "game"),
-    "level": ("level", "level"),
-    "room": ("room", "room"),
-    "character": ("character", "character"),
-    "luigi": ("luigi", "luigi"),
-    "ghost": ("ghost", "ghost"),
-    "goldGhost": ("goldGhost", "goldGhost"),
-    "purplePuncher": ("purplePuncher", "purplePuncher"),
-    "item": ("item", "item"),
-    "smallHeart": ("smallHeart", "smallHeart"),
-    "largeHeart": ("largeHeart", "largeHeart"),
-    "smallArmor": ("smallArmor", "smallArmor"),
-    "largeArmor": ("largeArmor", "largeArmor"),
+class SaveFileError(Exception):
+    """Raised when game_saves.json is present but cannot be used."""
+
+
+# Only these game classes may be reconstructed from JSON.  This explicit list
+# avoids importing or executing arbitrary classes named inside a save file.
+_CLASS_REGISTRY = {
+    cls.__name__: cls
+    for cls in (
+        game,
+        character,
+        luigi,
+        mario,
+        level,
+        room,
+        ghost,
+        goldGhost,
+        purplePuncher,
+        item,
+        smallHeart,
+        largeHeart,
+        smallArmor,
+        largeArmor,
+    )
 }
 
-_CLASS_CACHE = {}
 
+def _serialize(value):
+    """Convert a game value into data that Python's JSON encoder accepts."""
 
-def save_game(game_instance, file_name=SAVE_FILE):
-    """Write ``game_instance`` and all of its current state to a JSON file.
+    if value is None or isinstance(value, (bool, int, float, str)):
+        return value
+    if isinstance(value, list):
+        return [_serialize(entry) for entry in value]
+    if isinstance(value, tuple):
+        return {"__type__": "tuple", "items": [_serialize(entry) for entry in value]}
+    if isinstance(value, dict):
+        return {str(key): _serialize(entry) for key, entry in value.items()}
 
-    The save is written atomically: the old save remains untouched if writing
-    the replacement fails. The returned ``Path`` identifies the save file.
-    """
-    if game_instance.__class__.__name__ != "game":
-        raise TypeError("save_game expected an instance of the game class")
+    class_name = type(value).__name__
+    if class_name not in _CLASS_REGISTRY:
+        raise TypeError(f"Cannot save objects of type {class_name!r}.")
 
-    save_path = Path(file_name)
-    temporary_path = save_path.with_name(save_path.name + ".tmp")
-    object_ids = {}
-
-    save_data = {
-        "format": SAVE_FORMAT,
-        "version": SAVE_VERSION,
-        "game": _to_json_value(game_instance, object_ids, set()),
+    return {
+        "__type__": class_name,
+        "attributes": {
+            name: _serialize(attribute)
+            for name, attribute in vars(value).items()
+        },
     }
+
+
+def _deserialize(value):
+    """Rebuild values produced by :func:`_serialize`."""
+
+    if isinstance(value, list):
+        return [_deserialize(entry) for entry in value]
+    if not isinstance(value, dict):
+        return value
+
+    value_type = value.get("__type__")
+    if value_type == "tuple":
+        return tuple(_deserialize(entry) for entry in value.get("items", []))
+    if value_type is None:
+        return {key: _deserialize(entry) for key, entry in value.items()}
+    if value_type not in _CLASS_REGISTRY:
+        raise SaveFileError(f"Save file contains unknown object type {value_type!r}.")
+
+    attributes = value.get("attributes")
+    if not isinstance(attributes, dict):
+        raise SaveFileError(f"Saved {value_type!r} object has invalid attributes.")
+
+    cls = _CLASS_REGISTRY[value_type]
+    restored_object = cls.__new__(cls)
+    for name, attribute in attributes.items():
+        setattr(restored_object, name, _deserialize(attribute))
+    return restored_object
+
+
+def _empty_save_document():
+    return {"version": 1, "saves": []}
+
+
+def _read_save_document(file_path=None):
+    path = Path(SAVE_FILE if file_path is None else file_path)
+    if not path.exists():
+        return _empty_save_document()
+
+    try:
+        with path.open("r", encoding="utf-8") as save_file:
+            document = json.load(save_file)
+    except json.JSONDecodeError as error:
+        raise SaveFileError(f"{path.name} does not contain valid JSON.") from error
+    except OSError as error:
+        raise SaveFileError(f"Could not read {path.name}: {error}") from error
+
+    # Accept a plain list as a small compatibility convenience for early save
+    # files, but always write the documented object format from this module.
+    if isinstance(document, list):
+        document = {"version": 1, "saves": document}
+
+    if not isinstance(document, dict) or not isinstance(document.get("saves"), list):
+        raise SaveFileError(f"{path.name} does not have a valid save-file structure.")
+    return document
+
+
+def _write_save_document(document, file_path=None):
+    path = Path(SAVE_FILE if file_path is None else file_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary_path = path.with_suffix(path.suffix + ".tmp")
 
     try:
         with temporary_path.open("w", encoding="utf-8") as save_file:
-            json.dump(save_data, save_file, indent=4, ensure_ascii=False)
+            json.dump(document, save_file, indent=4)
             save_file.write("\n")
-            save_file.flush()
-            os.fsync(save_file.fileno())
-        os.replace(temporary_path, save_path)
-    except Exception:
-        # Remove only this function's incomplete temporary file. Never remove
-        # the caller's existing game_saves.json after a failed write.
-        try:
-            temporary_path.unlink()
-        except FileNotFoundError:
-            pass
-        raise
-
-    return save_path
+        temporary_path.replace(path)
+    except OSError as error:
+        raise SaveFileError(f"Could not write {path.name}: {error}") from error
 
 
-def load_game(file_name=SAVE_FILE):
-    """Read a JSON save file and return the reconstructed game instance.
+def save_game(game_instance, save_id=None, file_path=None):
+    """Append a game save, or update one when ``save_id`` is supplied.
 
-    Constructors are intentionally not called while loading. Calling them
-    would create a new Luigi and randomly redistribute a level's entities,
-    which would change the state that was saved.
+    The numeric ID of the newly created or updated save is returned.
     """
-    save_path = Path(file_name)
 
-    try:
-        with save_path.open("r", encoding="utf-8") as save_file:
-            save_data = json.load(save_file)
-    except json.JSONDecodeError as error:
-        raise ValueError(
-            "The game save is not valid JSON: {0}".format(save_path)
-        ) from error
+    if not isinstance(game_instance, game):
+        raise TypeError("save_game expects a game instance.")
 
-    if not isinstance(save_data, dict):
-        raise ValueError("The game save must contain a JSON object")
-    if save_data.get("format") != SAVE_FORMAT:
-        raise ValueError("The file is not a Luigi's Mansion game save")
-    if save_data.get("version") != SAVE_VERSION:
-        raise ValueError(
-            "Unsupported game save version: {0}".format(save_data.get("version"))
+    document = _read_save_document(file_path)
+    saves = document["saves"]
+    now = datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+    if save_id is None:
+        used_ids = {
+            record.get("save_id")
+            for record in saves
+            if isinstance(record, dict)
+            and isinstance(record.get("save_id"), int)
+        }
+        save_id = 1
+        while save_id in used_ids:
+            save_id += 1
+
+        record = {
+            "save_id": save_id,
+            "character": game_instance.player.name,
+            "level": game_instance.currentLevelNumber,
+            "created_at": now,
+            "updated_at": now,
+            "game": _serialize(game_instance),
+        }
+        saves.append(record)
+    else:
+        record = next(
+            (
+                saved_record
+                for saved_record in saves
+                if isinstance(saved_record, dict)
+                and saved_record.get("save_id") == save_id
+            ),
+            None,
         )
-    if "game" not in save_data:
-        raise ValueError("The game save does not contain game data")
+        if record is None:
+            raise SaveFileError(f"Save #{save_id} does not exist.")
 
-    loaded_game = _from_json_value(save_data["game"], {})
-    if loaded_game.__class__.__name__ != "game":
-        raise ValueError("The game save's root object is not a game instance")
+        record.update(
+            {
+                "character": game_instance.player.name,
+                "level": game_instance.currentLevelNumber,
+                "updated_at": now,
+                "game": _serialize(game_instance),
+            }
+        )
 
-    return loaded_game
+    _write_save_document(document, file_path)
+    return save_id
 
 
-def _to_json_value(value, object_ids, active_containers):
-    """Convert a supported Python value into a JSON-compatible value."""
-    if value is None or isinstance(value, (bool, int, float, str)):
-        return value
+def list_saves(file_path=None):
+    """Return menu-friendly information about every available save."""
 
-    if isinstance(value, list):
-        return _sequence_to_json(value, "list", object_ids, active_containers)
+    records = _read_save_document(file_path)["saves"]
+    summaries = []
+    for record in records:
+        if not isinstance(record, dict) or "save_id" not in record or "game" not in record:
+            raise SaveFileError("A save record is missing required information.")
+        summaries.append(
+            {
+                "save_id": record["save_id"],
+                "character": record.get("character", "Unknown"),
+                "level": record.get("level", "Unknown"),
+                "updated_at": record.get("updated_at", "Unknown"),
+            }
+        )
+    return summaries
 
-    if isinstance(value, tuple):
-        return _sequence_to_json(value, "tuple", object_ids, active_containers)
 
-    if isinstance(value, dict):
-        container_id = id(value)
-        if container_id in active_containers:
-            raise TypeError("The game contains a recursive dictionary")
-        active_containers.add(container_id)
+def load_game(save_id, file_path=None):
+    """Reconstruct and return the game instance stored under ``save_id``."""
+
+    records = _read_save_document(file_path)["saves"]
+    record = next(
+        (
+            saved_record
+            for saved_record in records
+            if isinstance(saved_record, dict)
+            and saved_record.get("save_id") == save_id
+        ),
+        None,
+    )
+    if record is None:
+        raise SaveFileError(f"Save #{save_id} does not exist.")
+
+    restored_game = _deserialize(record.get("game"))
+    if not isinstance(restored_game, game):
+        raise SaveFileError(f"Save #{save_id} does not contain a game instance.")
+    return restored_game
+
+
+def _choose_character():
+    while True:
+        print("\nChoose your main character:")
+        print("1) Mario")
+        print("2) Luigi")
+        choice = input("Select an option: ").strip().lower()
+
+        if choice in {"1", "m", "mario"}:
+            return mario()
+        if choice in {"2", "l", "luigi"}:
+            return luigi()
+        print("Invalid choice. Enter 1 for Mario or 2 for Luigi.")
+
+
+def _select_save():
+    try:
+        saves = list_saves()
+    except SaveFileError as error:
+        print(f"Unable to open the save file: {error}")
+        return None
+
+    if not saves:
+        print("\nNo saved games were found.")
+        return None
+
+    print("\nSelect a save:")
+    for menu_number, save in enumerate(saves, start=1):
+        print(
+            f"{menu_number}) {save['character']} - "
+            f"Floor {save['level']} - Last saved {save['updated_at']}"
+        )
+    print("B) Back")
+
+    while True:
+        choice = input("Select a save: ").strip().lower()
+        if choice in {"b", "back"}:
+            return None
+
         try:
-            items = {}
-            for key, item in value.items():
-                if not isinstance(key, str):
-                    raise TypeError("Game dictionaries must use string keys")
-                items[key] = _to_json_value(item, object_ids, active_containers)
-            return {"__kind__": "dict", "items": items}
-        finally:
-            active_containers.remove(container_id)
+            menu_number = int(choice)
+        except ValueError:
+            print("Invalid choice. Enter a save number or B to go back.")
+            continue
 
-    class_name = value.__class__.__name__
-    if class_name not in _CLASS_LOCATIONS:
-        raise TypeError(
-            "Cannot save unsupported object type: {0}".format(class_name)
-        )
-    if not hasattr(value, "__dict__"):
-        raise TypeError("Cannot save an object without instance attributes")
+        if not 1 <= menu_number <= len(saves):
+            print("Invalid choice. Enter one of the displayed save numbers.")
+            continue
 
-    python_id = id(value)
-    if python_id in object_ids:
-        return {"__kind__": "reference", "id": object_ids[python_id]}
-
-    save_id = len(object_ids) + 1
-    object_ids[python_id] = save_id
-    _CLASS_CACHE[class_name] = value.__class__
-
-    attributes = {
-        name: _to_json_value(attribute, object_ids, active_containers)
-        for name, attribute in vars(value).items()
-    }
-    return {
-        "__kind__": "object",
-        "id": save_id,
-        "type": class_name,
-        "attributes": attributes,
-    }
+        try:
+            return load_game(saves[menu_number - 1]["save_id"])
+        except SaveFileError as error:
+            print(f"Unable to load that save: {error}")
+            return None
 
 
-def _sequence_to_json(container, kind, object_ids, active_containers):
-    """Wrap a list or tuple and reject cycles that JSON cannot represent."""
-    container_id = id(container)
-    if container_id in active_containers:
-        raise TypeError("The game contains a recursive {0}".format(kind))
-    active_containers.add(container_id)
-    try:
-        # The wrapper keeps tuples distinguishable from lists in the JSON.
-        return {
-            "__kind__": kind,
-            "items": [
-                _to_json_value(item, object_ids, active_containers)
-                for item in container
-            ],
-        }
-    finally:
-        active_containers.remove(container_id)
+def menu():
+    """Display the startup menu and return the chosen game instance.
 
+    A new game is immediately recorded in ``game_saves.json``.  Selecting an
+    existing save reconstructs the same object graph that was stored.  Choosing
+    Exit raises ``SystemExit`` so the program ends even if a caller ignores the
+    function's return value.
+    """
 
-def _from_json_value(value, restored_objects):
-    """Convert a saved JSON value back into its original Python value."""
-    if value is None or isinstance(value, (bool, int, float, str)):
-        return value
-    if not isinstance(value, dict):
-        raise ValueError("Malformed value in game save")
+    while True:
+        print("\n==================================================")
+        print("      LUIGI'S MANSION: TERMINAL ADVENTURE")
+        print("==================================================")
+        print("1) New Save")
+        print("2) Select Save")
+        print("3) Exit")
 
-    kind = value.get("__kind__")
+        choice = input("Select an option: ").strip().lower()
 
-    if kind == "list":
-        items = _require_list(value, "items")
-        return [_from_json_value(item, restored_objects) for item in items]
+        if choice in {"1", "new", "new save"}:
+            new_game = game(player=_choose_character())
+            try:
+                save_id = save_game(new_game)
+            except SaveFileError as error:
+                print(f"Unable to create the save: {error}")
+                continue
+            print(f"\nCreated save #{save_id} for {new_game.player.name}.")
+            return new_game
 
-    if kind == "tuple":
-        items = _require_list(value, "items")
-        return tuple(_from_json_value(item, restored_objects) for item in items)
+        if choice in {"2", "select", "select save"}:
+            selected_game = _select_save()
+            if selected_game is not None:
+                print(f"\nLoaded {selected_game.player.name}'s save.")
+                return selected_game
+            continue
 
-    if kind == "dict":
-        items = value.get("items")
-        if not isinstance(items, dict):
-            raise ValueError("Malformed dictionary in game save")
-        return {
-            key: _from_json_value(item, restored_objects)
-            for key, item in items.items()
-        }
+        if choice in {"3", "exit", "quit"}:
+            print("Goodbye!")
+            raise SystemExit(0)
 
-    if kind == "reference":
-        save_id = value.get("id")
-        if save_id not in restored_objects:
-            raise ValueError("Game save contains an invalid object reference")
-        return restored_objects[save_id]
-
-    if kind == "object":
-        save_id = value.get("id")
-        class_name = value.get("type")
-        attributes = value.get("attributes")
-
-        if not isinstance(save_id, int) or save_id <= 0:
-            raise ValueError("Game save contains an invalid object ID")
-        if save_id in restored_objects:
-            raise ValueError("Game save contains a duplicate object ID")
-        if class_name not in _CLASS_LOCATIONS:
-            raise ValueError(
-                "Game save contains unsupported object type: {0}".format(class_name)
-            )
-        if not isinstance(attributes, dict):
-            raise ValueError("Game save contains malformed object attributes")
-
-        object_class = _resolve_class(class_name)
-        restored_object = object.__new__(object_class)
-        restored_objects[save_id] = restored_object
-
-        for name, attribute in attributes.items():
-            if not isinstance(name, str):
-                raise ValueError("Game save contains an invalid attribute name")
-            setattr(
-                restored_object,
-                name,
-                _from_json_value(attribute, restored_objects),
-            )
-        return restored_object
-
-    raise ValueError("Game save contains an unknown value type")
-
-
-def _require_list(value, key):
-    items = value.get(key)
-    if not isinstance(items, list):
-        raise ValueError("Malformed {0} in game save".format(value.get("__kind__")))
-    return items
-
-
-def _resolve_class(class_name):
-    """Return a known game class without trusting module names from JSON."""
-    if class_name in _CLASS_CACHE:
-        return _CLASS_CACHE[class_name]
-
-    module_name, attribute_name = _CLASS_LOCATIONS[class_name]
-    module = importlib.import_module(module_name)
-    object_class = getattr(module, attribute_name)
-
-    if not isinstance(object_class, type):
-        raise TypeError(
-            "{0}.{1} is not a class".format(module_name, attribute_name)
-        )
-
-    _CLASS_CACHE[class_name] = object_class
-    return object_class
+        print("Invalid choice. Enter 1, 2, or 3.")
