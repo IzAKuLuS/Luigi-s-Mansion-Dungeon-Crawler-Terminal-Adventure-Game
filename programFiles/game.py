@@ -55,7 +55,7 @@ class game:
 
 
             if self.state == "EXPLORATION":
-                self.proccessExplorationState(currentRoom)
+                self.processExplorationState(currentRoom)
             elif self.state == "COMBAT":
                 self.proccessCombatTurn()
             elif self.state == "GAME_OVER":
