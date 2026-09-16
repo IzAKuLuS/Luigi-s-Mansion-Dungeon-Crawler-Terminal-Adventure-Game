@@ -7,7 +7,7 @@
             "name": "Foyer",
             "floor": 1,
             "darkDescription": "The foyer is dark and unsettling.",
-            "litDescription": "The foyer is brightly lit and safe.",
+            "litDescription": "The foyer is brightly lit and safe. Looks a bit dated, but also timeless at the same time. Tons of Spiderwebs though...",
             "interactableObjects": {
                 "mirror": {"isSearched": false, "outcome": null},
                 "table stand": {"isSearched": false, "outcome": null},
@@ -18,7 +18,7 @@
             "name": "Library",
             "floor": 1,
             "darkDescription": "The library is dark and unsettling.",
-            "litDescription": "The library is brightly lit and safe.",
+            "litDescription": "The library is brightly lit and safe. The bookshelves are on the brink of breaking.",
             "interactableObjects": {
                 "recliner": {"isSearched": false, "outcome": null},
                 "coffee table": {"isSearched": false, "outcome": null},
@@ -39,10 +39,10 @@
             }
         },
         {
-            "name": "Kitchen / Dining Room",
+            "name": "Kitchen & Dining Room",
             "floor": 1,
             "darkDescription": "The kitchen and dining room are dark and unsettling.",
-            "litDescription": "The kitchen and dining room are brightly lit and safe.",
+            "litDescription": "The kitchen and dining room are brightly lit and safe. There is a rotten potato smashed on the ground...And you stepped in it!!!!!",
             "interactableObjects": {
                 "stool 1": {"isSearched": false, "outcome": null},
                 "stool 2": {"isSearched": false, "outcome": null},
@@ -58,7 +58,7 @@
             "name": "Rec Room",
             "floor": 1,
             "darkDescription": "The rec room is dark and unsettling.",
-            "litDescription": "The rec room is brightly lit and safe.",
+            "litDescription": "The rec room is brightly lit and safe. Looks like a fun place, if it wasn't 500 years old.",
             "interactableObjects": {
                 "pool table": {"isSearched": false, "outcome": null},
                 "small table": {"isSearched": false, "outcome": null},

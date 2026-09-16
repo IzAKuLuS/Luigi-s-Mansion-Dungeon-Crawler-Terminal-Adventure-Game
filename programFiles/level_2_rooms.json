@@ -7,7 +7,7 @@
             "name": "Guest Bedroom #1",
             "floor": 2,
             "darkDescription": "The first guest bedroom is dark and unsettling.",
-            "litDescription": "The first guest bedroom is brightly lit and safe.",
+            "litDescription": "The first guest bedroom is brightly lit and safe. Someone left their pajamas on the bed...",
             "interactableObjects": {
                 "bed": {"isSearched": false, "outcome": null},
                 "nightstand 1": {"isSearched": false, "outcome": null},
@@ -21,7 +21,7 @@
             "name": "Guest Bedroom #2",
             "floor": 2,
             "darkDescription": "The second guest bedroom is dark and unsettling.",
-            "litDescription": "The second guest bedroom is brightly lit and safe.",
+            "litDescription": "The second guest bedroom is brightly lit and safe. Why is there a massive dark stain on the carpet?",
             "interactableObjects": {
                 "bed": {"isSearched": false, "outcome": null},
                 "nightstand": {"isSearched": false, "outcome": null},
@@ -34,7 +34,7 @@
             "name": "Safari Room",
             "floor": 2,
             "darkDescription": "The safari room is dark and unsettling.",
-            "litDescription": "The safari room is brightly lit and safe.",
+            "litDescription": "The safari room is brightly lit and safe. Come to think of it, the owner of this mansion is a murderer. Oh wait...",
             "interactableObjects": {
                 "wall-mounted deer head": {"isSearched": false, "outcome": null},
                 "built-in cabinets": {"isSearched": false, "outcome": null},
@@ -50,7 +50,7 @@
             "name": "Clock Room",
             "floor": 2,
             "darkDescription": "The clock room is dark and unsettling.",
-            "litDescription": "The clock room is brightly lit and safe.",
+            "litDescription": "The clock room is brightly lit and safe. This room is the embodiment of having way too much money to spend. Jeez.",
             "interactableObjects": {
                 "small clock": {"isSearched": false, "outcome": null},
                 "grandfather clock": {"isSearched": false, "outcome": null},
