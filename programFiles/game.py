@@ -1,8 +1,12 @@
 
 
+
 import json, sys
 from level import level
 from luigi import luigi
+
+MAX_LEVEL_COUNT = 4
+
 
 class game:
     def __init__(self):
@@ -175,7 +179,7 @@ class game:
             print(f"\n***LEVEL {self.currentLevelNumber} COMPLETE! ***")
             self.currentLevelNumber += 1
 
-            if self.currentLevelNumber > 3:
+            if self.currentLevelNumber > MAX_LEVEL_COUNT:
                 self.state = "VICTORY"
 
             else:

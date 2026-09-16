@@ -10,10 +10,14 @@
 # roomBlueprints is a list of dictionaries provided by a JSON file
 
 
-import random, room, goldGhost, purplePuncher
+import random
+
+from room import room
+from goldGhost import goldGhost
+from purplePuncher import purplePuncher
 
 class level:
-    def init(self, levelName, roomBlueprints, numGhosts, numItems):
+    def __init__(self, levelName, roomBlueprints, numGhosts, numItems):
         self.levelName = levelName
         self.rooms = {}
         self.numGhosts = numGhosts
