@@ -1,4 +1,4 @@
-import item
+from item import item
 
 SMALL_ARMOR_SLOTS = 1
 

@@ -1,4 +1,4 @@
-import item
+from item import item
 
 LARGE_ARMOR_SLOTS = 3
 

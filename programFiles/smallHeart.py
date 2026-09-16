@@ -3,7 +3,7 @@
 
 SMALL_HEART_HEALTH = 25
 
-import item
+from item import item
 
 
 class smallHeart(item):

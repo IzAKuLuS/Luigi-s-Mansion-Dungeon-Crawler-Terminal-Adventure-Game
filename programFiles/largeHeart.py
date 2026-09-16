@@ -5,7 +5,7 @@
 
 LARGE_HEART_HEALTH = 100
 
-import item
+from item import item
 
 class largeHeart(item):
     def __init__(self):

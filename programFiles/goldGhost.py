@@ -2,7 +2,9 @@
 # The goldGhost class extends the ghost class.
 # The gold ghost is the simplest enemy in the game. It has low health and only 1 weak attack.
 
-import ghost, random
+import random
+
+from ghost import ghost
 
 GOLD_GHOST_BASE_DAMAGE = 10
 

@@ -2,7 +2,7 @@
 # The ghost class extends the character class.
 # The ghost class adds a numAttacks attribute for determining which attack the ghost will use in battle.
 
-import character
+from character import character
 
 class ghost(character):
     def __init__(self, name, health, skill, numAttacks):

@@ -4,7 +4,9 @@
 # softPunch is a weaker attack that does less damage than hardPunch (but more than the goldGhost's attack).
 # hardPunch is a stronger attack that does more damage than softPunch.
 
-import ghost, random
+import random
+
+from ghost import ghost
 
 PURPLE_PUNCHER_BASE_DAMAGE = 15
 

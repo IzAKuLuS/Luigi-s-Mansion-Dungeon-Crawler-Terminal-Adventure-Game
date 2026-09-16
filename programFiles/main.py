@@ -20,6 +20,6 @@ def main():
 
 
 if __name__ == "__main__":
-    # A new or restored game is now available for the future gameplay startup.
+    # A new or restored game is now available for the future gamSeeplay startup.
     # If the player exits from the menu, menu() returns None instead.
     active_game = main()

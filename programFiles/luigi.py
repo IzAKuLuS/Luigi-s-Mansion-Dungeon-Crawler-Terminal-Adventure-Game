@@ -4,7 +4,8 @@
 # The luigi class adds an inventory to the character class that allows luigi to obtain/store items.
 # The inventory is a dictionary that contains two dictionaries: one for hearts and one for armor.
 
-import item, character
+from item import item
+from character import character
 
 SMALL_HEART_HEALTH = 25
 LARGE_HEART_HEALTH = 100
