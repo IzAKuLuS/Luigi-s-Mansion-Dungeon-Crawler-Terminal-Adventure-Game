@@ -1,5 +1,8 @@
-# This is a smallHeart class extends the item class. 
-# It represents a small heart item that can be used to heal Luigi in game.
+"""
+This is the smallHeart class.
+This class extends the item class.
+This class represents a small heart item that gives luigi health
+"""
 
 SMALL_HEART_HEALTH = 25
 

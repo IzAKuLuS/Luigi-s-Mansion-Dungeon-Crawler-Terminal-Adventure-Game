@@ -3,20 +3,21 @@
     "saves": [
         {
             "save_id": 1,
-            "character": "Luigi",
+            "save_name": "forTheLoveOfTheGame",
+            "character": "Mario",
             "level": 1,
-            "created_at": "2026-09-17T17:13:32+00:00",
-            "updated_at": "2026-09-17T17:18:07+00:00",
+            "created_at": "2026-09-17T18:00:27+00:00",
+            "updated_at": "2026-09-17T22:37:06+00:00",
             "game": {
                 "__type__": "game",
                 "attributes": {
                     "state": "EXPLORATION",
                     "isRunning": true,
                     "player": {
-                        "__type__": "luigi",
+                        "__type__": "mario",
                         "attributes": {
-                            "name": "Luigi",
-                            "health": 39,
+                            "name": "Mario",
+                            "health": 27,
                             "skill": 1,
                             "inventory": {
                                 "hearts": {
@@ -86,23 +87,144 @@
                                         "litDescription": "The library is brightly lit and safe. The bookshelves are on the brink of breaking.",
                                         "interactableObjects": {
                                             "recliner": {
-                                                "isSearched": false,
+                                                "isSearched": true,
                                                 "outcome": null
                                             },
                                             "coffee table": {
-                                                "isSearched": false,
+                                                "isSearched": true,
+                                                "outcome": null
+                                            },
+                                            "desk": {
+                                                "isSearched": true,
+                                                "outcome": null
+                                            },
+                                            "small bookshelf": {
+                                                "isSearched": true,
                                                 "outcome": {
-                                                    "__type__": "purplePuncher",
+                                                    "__type__": "largeArmor",
                                                     "attributes": {
-                                                        "name": "Purple Puncher",
-                                                        "health": 50,
-                                                        "skill": 2,
-                                                        "numAttacks": 2
+                                                        "name": "Large Armor",
+                                                        "description": "Halves damage from the next 5 ghost attacks.",
+                                                        "itemType": "largeArmor",
+                                                        "magnitude": 3,
+                                                        "durability": 0
                                                     }
                                                 }
                                             },
-                                            "desk": {
-                                                "isSearched": false,
+                                            "large bookshelf": {
+                                                "isSearched": true,
+                                                "outcome": {
+                                                    "__type__": "smallHeart",
+                                                    "attributes": {
+                                                        "name": "Small Heart",
+                                                        "description": "This is a small heart. It heals 25 health.",
+                                                        "itemType": "smallHeart",
+                                                        "magnitude": 25
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "isCleared": true
+                                    }
+                                },
+                                "Master Bedroom": {
+                                    "__type__": "room",
+                                    "attributes": {
+                                        "roomName": "Master Bedroom",
+                                        "floor": 1,
+                                        "darkDescription": "The master bedroom is dark and unsettling.",
+                                        "litDescription": "The master bedroom is brightly lit and safe.",
+                                        "interactableObjects": {
+                                            "bed": {
+                                                "isSearched": true,
+                                                "outcome": null
+                                            },
+                                            "dresser": {
+                                                "isSearched": true,
+                                                "outcome": null
+                                            },
+                                            "makeup stand": {
+                                                "isSearched": true,
+                                                "outcome": null
+                                            }
+                                        },
+                                        "isCleared": true
+                                    }
+                                },
+                                "Kitchen & Dining Room": {
+                                    "__type__": "room",
+                                    "attributes": {
+                                        "roomName": "Kitchen & Dining Room",
+                                        "floor": 1,
+                                        "darkDescription": "The kitchen and dining room are dark and unsettling.",
+                                        "litDescription": "The kitchen and dining room are brightly lit and safe. There is a rotten potato smashed on the ground...And you stepped in it!!!!!",
+                                        "interactableObjects": {
+                                            "stool 1": {
+                                                "isSearched": true,
+                                                "outcome": {
+                                                    "__type__": "largeHeart",
+                                                    "attributes": {
+                                                        "name": "Large Heart",
+                                                        "description": "This is a large heart. It heals 100 health.",
+                                                        "itemType": "largeHeart",
+                                                        "magnitude": 100
+                                                    }
+                                                }
+                                            },
+                                            "stool 2": {
+                                                "isSearched": true,
+                                                "outcome": null
+                                            },
+                                            "stool 3": {
+                                                "isSearched": true,
+                                                "outcome": null
+                                            },
+                                            "gas range": {
+                                                "isSearched": true,
+                                                "outcome": null
+                                            },
+                                            "sink": {
+                                                "isSearched": true,
+                                                "outcome": {
+                                                    "__type__": "largeHeart",
+                                                    "attributes": {
+                                                        "name": "Large Heart",
+                                                        "description": "This is a large heart. It heals 100 health.",
+                                                        "itemType": "largeHeart",
+                                                        "magnitude": 100
+                                                    }
+                                                }
+                                            },
+                                            "refrigerator": {
+                                                "isSearched": true,
+                                                "outcome": null
+                                            },
+                                            "cabinets": {
+                                                "isSearched": true,
+                                                "outcome": null
+                                            },
+                                            "large vase": {
+                                                "isSearched": true,
+                                                "outcome": null
+                                            }
+                                        },
+                                        "isCleared": true
+                                    }
+                                },
+                                "Rec Room": {
+                                    "__type__": "room",
+                                    "attributes": {
+                                        "roomName": "Rec Room",
+                                        "floor": 1,
+                                        "darkDescription": "The rec room is dark and unsettling.",
+                                        "litDescription": "The rec room is brightly lit and safe. Looks like a fun place, if it wasn't 500 years old.",
+                                        "interactableObjects": {
+                                            "pool table": {
+                                                "isSearched": true,
+                                                "outcome": null
+                                            },
+                                            "small table": {
+                                                "isSearched": true,
                                                 "outcome": {
                                                     "__type__": "smallArmor",
                                                     "attributes": {
@@ -110,11 +232,19 @@
                                                         "description": "Halves damage from the next 3 ghost attacks.",
                                                         "itemType": "smallArmor",
                                                         "magnitude": 1,
-                                                        "durability": 3
+                                                        "durability": 0
                                                     }
                                                 }
                                             },
-                                            "small bookshelf": {
+                                            "table stand": {
+                                                "isSearched": true,
+                                                "outcome": null
+                                            },
+                                            "trash can": {
+                                                "isSearched": true,
+                                                "outcome": null
+                                            },
+                                            "couch": {
                                                 "isSearched": false,
                                                 "outcome": {
                                                     "__type__": "purplePuncher",
@@ -126,17 +256,173 @@
                                                     }
                                                 }
                                             },
-                                            "large bookshelf": {
+                                            "tv console": {
                                                 "isSearched": false,
                                                 "outcome": {
-                                                    "__type__": "goldGhost",
+                                                    "__type__": "purplePuncher",
                                                     "attributes": {
-                                                        "name": "Gold Ghost",
-                                                        "health": 30,
-                                                        "skill": 1,
-                                                        "numAttacks": 1
+                                                        "name": "Purple Puncher",
+                                                        "health": 50,
+                                                        "skill": 2,
+                                                        "numAttacks": 2
                                                     }
                                                 }
+                                            }
+                                        },
+                                        "isCleared": false
+                                    }
+                                }
+                            },
+                            "numGhosts": 0,
+                            "numItems": 0,
+                            "isCleared": false
+                        }
+                    },
+                    "currentRoomName": "Rec Room",
+                    "activeGhost": null,
+                    "activeGhostObjectName": null,
+                    "saveId": 1,
+                    "saveName": "forTheLoveOfTheGame"
+                }
+            }
+        },
+        {
+            "save_id": 2,
+            "save_name": "test",
+            "character": "Luigi",
+            "level": 1,
+            "created_at": "2026-09-17T19:08:20+00:00",
+            "updated_at": "2026-09-17T19:13:12+00:00",
+            "game": {
+                "__type__": "game",
+                "attributes": {
+                    "state": "EXPLORATION",
+                    "isRunning": true,
+                    "player": {
+                        "__type__": "luigi",
+                        "attributes": {
+                            "name": "Luigi",
+                            "health": 63,
+                            "skill": 1,
+                            "inventory": {
+                                "hearts": {
+                                    "smallHearts": [
+                                        null,
+                                        null,
+                                        null
+                                    ],
+                                    "largeHearts": [
+                                        {
+                                            "__type__": "largeHeart",
+                                            "attributes": {
+                                                "name": "Large Heart",
+                                                "description": "This is a large heart. It heals 100 health.",
+                                                "itemType": "largeHeart",
+                                                "magnitude": 100
+                                            }
+                                        },
+                                        null,
+                                        null
+                                    ]
+                                },
+                                "armor": {
+                                    "smallArmor": [
+                                        null,
+                                        null,
+                                        null
+                                    ],
+                                    "largeArmor": [
+                                        null,
+                                        null,
+                                        null
+                                    ]
+                                }
+                            },
+                            "armor": 0
+                        }
+                    },
+                    "currentLevelNumber": 1,
+                    "currentLevel": {
+                        "__type__": "level",
+                        "attributes": {
+                            "levelName": "First Floor",
+                            "rooms": {
+                                "Foyer": {
+                                    "__type__": "room",
+                                    "attributes": {
+                                        "roomName": "Foyer",
+                                        "floor": 1,
+                                        "darkDescription": "The foyer is dark and unsettling.",
+                                        "litDescription": "The foyer is brightly lit and safe. Looks a bit dated, but also timeless at the same time. Tons of Spiderwebs though...",
+                                        "interactableObjects": {
+                                            "mirror": {
+                                                "isSearched": true,
+                                                "outcome": null
+                                            },
+                                            "table stand": {
+                                                "isSearched": true,
+                                                "outcome": {
+                                                    "__type__": "smallArmor",
+                                                    "attributes": {
+                                                        "name": "Small Armor",
+                                                        "description": "Halves damage from the next 3 ghost attacks.",
+                                                        "itemType": "smallArmor",
+                                                        "magnitude": 1,
+                                                        "durability": 0
+                                                    }
+                                                }
+                                            },
+                                            "wooden chair": {
+                                                "isSearched": true,
+                                                "outcome": null
+                                            }
+                                        },
+                                        "isCleared": true
+                                    }
+                                },
+                                "Library": {
+                                    "__type__": "room",
+                                    "attributes": {
+                                        "roomName": "Library",
+                                        "floor": 1,
+                                        "darkDescription": "The library is dark and unsettling.",
+                                        "litDescription": "The library is brightly lit and safe. The bookshelves are on the brink of breaking.",
+                                        "interactableObjects": {
+                                            "recliner": {
+                                                "isSearched": false,
+                                                "outcome": {
+                                                    "__type__": "purplePuncher",
+                                                    "attributes": {
+                                                        "name": "Purple Puncher",
+                                                        "health": 50,
+                                                        "skill": 2,
+                                                        "numAttacks": 2
+                                                    }
+                                                }
+                                            },
+                                            "coffee table": {
+                                                "isSearched": false,
+                                                "outcome": null
+                                            },
+                                            "desk": {
+                                                "isSearched": false,
+                                                "outcome": null
+                                            },
+                                            "small bookshelf": {
+                                                "isSearched": false,
+                                                "outcome": {
+                                                    "__type__": "largeHeart",
+                                                    "attributes": {
+                                                        "name": "Large Heart",
+                                                        "description": "This is a large heart. It heals 100 health.",
+                                                        "itemType": "largeHeart",
+                                                        "magnitude": 100
+                                                    }
+                                                }
+                                            },
+                                            "large bookshelf": {
+                                                "isSearched": false,
+                                                "outcome": null
                                             }
                                         },
                                         "isCleared": false
@@ -153,36 +439,36 @@
                                             "bed": {
                                                 "isSearched": false,
                                                 "outcome": {
-                                                    "__type__": "largeHeart",
+                                                    "__type__": "purplePuncher",
                                                     "attributes": {
-                                                        "name": "Large Heart",
-                                                        "description": "This is a large heart. It heals 100 health.",
-                                                        "itemType": "largeHeart",
-                                                        "magnitude": 100
+                                                        "name": "Purple Puncher",
+                                                        "health": 50,
+                                                        "skill": 2,
+                                                        "numAttacks": 2
                                                     }
                                                 }
                                             },
                                             "dresser": {
                                                 "isSearched": false,
                                                 "outcome": {
-                                                    "__type__": "smallHeart",
+                                                    "__type__": "goldGhost",
                                                     "attributes": {
-                                                        "name": "Small Heart",
-                                                        "description": "This is a small heart. It heals 25 health.",
-                                                        "itemType": "smallHeart",
-                                                        "magnitude": 25
+                                                        "name": "Gold Ghost",
+                                                        "health": 30,
+                                                        "skill": 1,
+                                                        "numAttacks": 1
                                                     }
                                                 }
                                             },
                                             "makeup stand": {
                                                 "isSearched": false,
                                                 "outcome": {
-                                                    "__type__": "largeHeart",
+                                                    "__type__": "goldGhost",
                                                     "attributes": {
-                                                        "name": "Large Heart",
-                                                        "description": "This is a large heart. It heals 100 health.",
-                                                        "itemType": "largeHeart",
-                                                        "magnitude": 100
+                                                        "name": "Gold Ghost",
+                                                        "health": 30,
+                                                        "skill": 1,
+                                                        "numAttacks": 1
                                                     }
                                                 }
                                             }
@@ -204,33 +490,13 @@
                                             },
                                             "stool 2": {
                                                 "isSearched": false,
-                                                "outcome": {
-                                                    "__type__": "goldGhost",
-                                                    "attributes": {
-                                                        "name": "Gold Ghost",
-                                                        "health": 30,
-                                                        "skill": 1,
-                                                        "numAttacks": 1
-                                                    }
-                                                }
+                                                "outcome": null
                                             },
                                             "stool 3": {
                                                 "isSearched": false,
-                                                "outcome": {
-                                                    "__type__": "goldGhost",
-                                                    "attributes": {
-                                                        "name": "Gold Ghost",
-                                                        "health": 30,
-                                                        "skill": 1,
-                                                        "numAttacks": 1
-                                                    }
-                                                }
-                                            },
-                                            "gas range": {
-                                                "isSearched": false,
                                                 "outcome": null
                                             },
-                                            "sink": {
+                                            "gas range": {
                                                 "isSearched": false,
                                                 "outcome": {
                                                     "__type__": "purplePuncher",
@@ -242,9 +508,21 @@
                                                     }
                                                 }
                                             },
-                                            "refrigerator": {
+                                            "sink": {
                                                 "isSearched": false,
                                                 "outcome": null
+                                            },
+                                            "refrigerator": {
+                                                "isSearched": false,
+                                                "outcome": {
+                                                    "__type__": "goldGhost",
+                                                    "attributes": {
+                                                        "name": "Gold Ghost",
+                                                        "health": 30,
+                                                        "skill": 1,
+                                                        "numAttacks": 1
+                                                    }
+                                                }
                                             },
                                             "cabinets": {
                                                 "isSearched": false,
@@ -261,7 +539,15 @@
                                             },
                                             "large vase": {
                                                 "isSearched": false,
-                                                "outcome": null
+                                                "outcome": {
+                                                    "__type__": "goldGhost",
+                                                    "attributes": {
+                                                        "name": "Gold Ghost",
+                                                        "health": 30,
+                                                        "skill": 1,
+                                                        "numAttacks": 1
+                                                    }
+                                                }
                                             }
                                         },
                                         "isCleared": false
@@ -276,14 +562,42 @@
                                         "litDescription": "The rec room is brightly lit and safe. Looks like a fun place, if it wasn't 500 years old.",
                                         "interactableObjects": {
                                             "pool table": {
-                                                "isSearched": false,
-                                                "outcome": null
+                                                "isSearched": true,
+                                                "outcome": {
+                                                    "__type__": "largeHeart",
+                                                    "attributes": {
+                                                        "name": "Large Heart",
+                                                        "description": "This is a large heart. It heals 100 health.",
+                                                        "itemType": "largeHeart",
+                                                        "magnitude": 100
+                                                    }
+                                                }
                                             },
                                             "small table": {
-                                                "isSearched": false,
+                                                "isSearched": true,
                                                 "outcome": null
                                             },
                                             "table stand": {
+                                                "isSearched": true,
+                                                "outcome": null
+                                            },
+                                            "trash can": {
+                                                "isSearched": true,
+                                                "outcome": null
+                                            },
+                                            "couch": {
+                                                "isSearched": false,
+                                                "outcome": {
+                                                    "__type__": "smallHeart",
+                                                    "attributes": {
+                                                        "name": "Small Heart",
+                                                        "description": "This is a small heart. It heals 25 health.",
+                                                        "itemType": "smallHeart",
+                                                        "magnitude": 25
+                                                    }
+                                                }
+                                            },
+                                            "tv console": {
                                                 "isSearched": false,
                                                 "outcome": {
                                                     "__type__": "purplePuncher",
@@ -294,26 +608,6 @@
                                                         "numAttacks": 2
                                                     }
                                                 }
-                                            },
-                                            "trash can": {
-                                                "isSearched": false,
-                                                "outcome": null
-                                            },
-                                            "couch": {
-                                                "isSearched": false,
-                                                "outcome": {
-                                                    "__type__": "goldGhost",
-                                                    "attributes": {
-                                                        "name": "Gold Ghost",
-                                                        "health": 30,
-                                                        "skill": 1,
-                                                        "numAttacks": 1
-                                                    }
-                                                }
-                                            },
-                                            "tv console": {
-                                                "isSearched": false,
-                                                "outcome": null
                                             }
                                         },
                                         "isCleared": false
@@ -325,10 +619,11 @@
                             "isCleared": false
                         }
                     },
-                    "currentRoomName": "Foyer",
+                    "currentRoomName": "Rec Room",
                     "activeGhost": null,
                     "activeGhostObjectName": null,
-                    "saveId": 1
+                    "saveId": 2,
+                    "saveName": "test"
                 }
             }
         }

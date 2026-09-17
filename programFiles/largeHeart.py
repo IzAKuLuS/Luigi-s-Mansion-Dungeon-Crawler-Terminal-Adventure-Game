@@ -1,7 +1,10 @@
 
+
+"""
 # This is a largeHeart class.
 # The largeHeart class extends the item class. 
 # It represents a large heart item that can be used to heal Luigi in game.
+"""
 
 LARGE_HEART_HEALTH = 100
 

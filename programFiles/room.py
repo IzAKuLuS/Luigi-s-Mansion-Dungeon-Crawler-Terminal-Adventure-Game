@@ -1,3 +1,5 @@
+
+"""
 # This class represents a room in the game. It contains information about the room's name, floor, descriptions, and interactable objects.
 # roomName is a string that represents the name of the room.
 # floor is an integer that represents the floor the room is on.
@@ -8,7 +10,7 @@
 # - The values are dictionaries that contain information about the object, which include:
 # -- isSearched is a boolean that represents whether the object has been searched by the player.
 # -- outcome is a string that represents the outcome of searching the object. This can be money, a consumable item, or a ghost.
-
+"""
 from ghost import ghost
 
 class room:

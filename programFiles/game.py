@@ -1,5 +1,14 @@
 
-
+"""
+This is the game class.
+The game class represents an object that manages an individual game instance.
+Every game instance has:
+1) state: represents the current game state. 
+2) isRunning represents whether the game is running or not.
+3) currentLevelNumber represents the current level that the player is on in the game instance.
+4) currentLevel represents the current level object that manages itself manages the associated rooms/items/ghosts in said level
+5) activeGhostObjectName represents the current enemy 
+"""
 
 import json, sys
 from level import level

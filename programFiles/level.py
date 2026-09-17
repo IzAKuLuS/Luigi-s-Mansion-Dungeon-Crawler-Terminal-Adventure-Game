@@ -1,3 +1,6 @@
+
+
+"""
 # This class represents a level in the game
 # Each level has a name, a collection of rooms, a number of ghosts, and a number of items.
 # levelName is a string that represents the name of the level.
@@ -8,6 +11,7 @@
 # numItems is an integer that represents the number of items in the level.
 
 # roomBlueprints is a list of dictionaries provided by a JSON file
+"""
 
 
 import random

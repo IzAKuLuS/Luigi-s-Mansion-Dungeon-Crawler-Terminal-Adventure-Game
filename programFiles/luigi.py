@@ -1,28 +1,32 @@
-
+"""
 # This is the luigi class.
 # The luigi class extends the character class
 # The luigi class adds an inventory to the character class that allows luigi to obtain/store items.
 # The inventory is a dictionary that contains two dictionaries: one for hearts and one for armor.
+This class aslo adds an armor attribute that allows luigi to shield themselves from damage.
+"""
 
 from item import item
 from character import character
+import random
 
 SMALL_HEART_HEALTH = 25
 LARGE_HEART_HEALTH = 100
 
 VACUUM_BASE_DAMAGE = 15
+FLASHLIGHT_BASE_DAMAGE = 5
 
 SMALL_ARMOR_VALUE = 1
 LARGE_ARMOR_VALUE = 3
 
 ITEM_ARRAY_SIZE = 3
 
+RANDOM_VACUUM_LOWER_BOUND_DAMAGE = 0
+RANDOM__VACUUM_UPPER_BOUND_DAMAGE = 10
+RANDOM_FLASHLIGHT_LOWER_BOUND_DAMAGE = 0
+RANDOM_FLASHLIGHT_UPPER_BOUND_DAMAGE = 5
 
 
-# This class represents the main character in the game.
-# This class extends the character class.
-# This class adds an inventory that Luigi can use to obtain/store items.
-# This class also adds an armor attribute that allows luigi to shield themselves from damage.
 class luigi(character):
     
     def __init__(self):
@@ -197,10 +201,14 @@ class luigi(character):
 
     def vacuumAttack(self, enemy):
         """Damage an enemy with Luigi's Poltergust."""
-        damage = VACUUM_BASE_DAMAGE * self.skill
+        damage = VACUUM_BASE_DAMAGE + random.randint(RANDOM_VACUUM_LOWER_BOUND_DAMAGE, RANDOM__VACUUM_UPPER_BOUND_DAMAGE) * self.skill
         enemy.takeDamage(damage)
         print(f"{self.name} vacuums {enemy.name} for {damage} damage!")
         return damage
+    
+    def flashLightAttack(self, enemy):
+        """Damage an enemy with Luigi's flash light"""
+        damage = VACUUM_BASE_DAMAGE + random.randint(RANDOM_VACUUM_LOWER_BOUND_DAMAGE, RANDOM__VACUUM_UPPER_BOUND_DAMAGE) * self.skill
 
     def useItem(self, inventoryItem):
         """Apply an item's effect using its itemType and magnitude."""

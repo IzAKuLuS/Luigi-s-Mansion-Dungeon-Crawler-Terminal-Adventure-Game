@@ -1,10 +1,12 @@
 
+"""
+This class represents a character.
+Each character contains within it a name, a health level, and a skill.
+Name represents the name of the character.
+Health represents how much health the character has.
+Skill represents a number that is used to determine the amount of extra damage one can do. 
+"""
 
-
-# This class represents a character.
-# Each character contains within it a name, a health level, and a skill.
-# Name and health are self explanatory (I hope...)
-# Skill represents a number that is used to determine the amount of damage one can do. 
 class character:
     def __init__(self, name, health, skill):
         self.name = name

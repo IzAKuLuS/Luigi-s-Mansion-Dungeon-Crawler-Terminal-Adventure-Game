@@ -1,7 +1,9 @@
+
+"""
 # This is the goldGhost class. 
 # The goldGhost class extends the ghost class.
 # The gold ghost is the simplest enemy in the game. It has low health and only 1 weak attack.
-
+"""
 import random
 
 from ghost import ghost
