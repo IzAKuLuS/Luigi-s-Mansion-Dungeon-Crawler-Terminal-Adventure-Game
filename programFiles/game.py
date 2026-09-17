@@ -28,6 +28,7 @@ class game:
         print("==================================================")
         print("      LUIGI'S MANSION: TERMINAL ADVENTURE         ")
         print("==================================================")
+        print()
 
         self.loadLevel(self.currentLevelNumber)
 
@@ -81,6 +82,7 @@ class game:
             f"{self.player.name} HP: {self.player.health} | "
             f"Armor: {self.player.getArmorStatus()}"
         )
+        print()
         print(currentRoom.getRoomDescription())
 
         print("\nObjects you can inspect:")
@@ -91,7 +93,7 @@ class game:
         # Get player input
         userInput = input(
             "\nWhat would you like to do? "
-            "(e.g., 'inspect [object]', 'move [room]', 'inventory', "
+            "(e.g., 'inspect [object]', 'map', 'move [room]', 'inventory', "
             "'use [item]', 'save', 'quit'): "
         ).strip().lower()
         parts = userInput.split(" ", 1)
@@ -101,7 +103,7 @@ class game:
         
         # Command Parsing
         if verb == "quit":
-            print("Exiting game. Goodbye!")
+            print("\nExiting game. Goodbye!\n")
             self.isRunning = False
         
         # Loops back to print room details    
@@ -111,9 +113,12 @@ class game:
         elif verb == "inventory":
             self.player.getInventory()
 
+        elif verb == "map":
+            self.displayMap()
+
         elif verb == "use":
             if not noun:
-                print("Specify an item to use.")
+                print("\nSpecify an item to use.\n")
                 return
             self.player.useInventoryItem(noun)
 
@@ -122,7 +127,7 @@ class game:
             
         elif verb == "inspect":
             if not noun:
-                print("Specify an object.")
+                print("\nSpecify an object.\n")
                 
             # Call the inspectObject method from the room class
             result = currentRoom.inspectObject(noun)
@@ -141,7 +146,7 @@ class game:
                     
                 # Check if the outcome is an Item object / string 
                 elif isinstance(outcome, item):
-                    print(f"You found an item: {outcome.name}!")
+                    print(f"\nYou found an item: {outcome.name}!")
                     # Use Luigi's built-in inventory routing method from luigi.py
                     self.player.addToInventory(outcome)
                     
@@ -155,20 +160,40 @@ class game:
                 
         elif verb == "move" or verb == "go":
             if not noun:
-                print("Specify a room name.")
+                print("\nSpecify a room name. Type 'map' to see the available rooms.\n")
                 return
                 
             targetRoom = noun.title()
             if targetRoom in self.currentLevel.rooms:
                 self.currentRoomName = targetRoom
-                print(f"You walk into the {targetRoom}.")
+                print(f"\nYou walk into the {targetRoom}.\n")
             else:
-                print(f"You cannot reach '{noun}' from here or it doesn't exist. Try again.")
+                print(
+                    f"\nYou cannot reach '{noun}' from here or it doesn't exist. "
+                    "Type 'map' to see the available rooms.\n"
+                )
         else:
             print(
-                "Unknown command. Try 'inspect [object]', 'move [room]', "
-                "'inventory', 'use [item]', 'save', 'look', or 'quit'."
+                "\nUnknown command. Try 'inspect [object]', 'map', "
+                "'move [room]', 'inventory', 'use [item]', 'save', "
+                "'look', or 'quit'.\n"
             )
+
+    def displayMap(self):
+        """Display every room currently reachable on this floor."""
+        print("\n==================================================")
+        print(f"MAP: {self.currentLevel.levelName}")
+        print("==================================================")
+        print("All rooms on this floor are available to explore:\n")
+
+        for roomName, roomData in self.currentLevel.rooms.items():
+            currentMarker = "->" if roomName == self.currentRoomName else "  "
+            locationStatus = "CURRENT" if roomName == self.currentRoomName else "AVAILABLE"
+            clearStatus = "CLEARED" if roomData.isCleared else "UNCLEARED"
+            print(f"{currentMarker} {roomName} [{locationStatus} | {clearStatus}]")
+
+        print("\nMove with: move [room name]")
+        print("Example: move library\n")
 
     def processCombatTurn(self):
         if self.activeGhost is None:
@@ -183,8 +208,8 @@ class game:
         )
 
         choice = input(
-            "Choose action: [1] Vacuum Attack [2] Run "
-            "[3] Use Item [4] Save [5] Inventory: "
+            "\nChoose action: [1] Vacuum Attack [2] Run "
+            "[3] Use Item [4] Save [5] Inventory [6] Map: "
         ).strip().lower()
 
         if choice in {"4", "save"}:
@@ -193,6 +218,10 @@ class game:
 
         if choice in {"5", "inventory"}:
             self.player.getInventory()
+            return
+
+        if choice in {"6", "map"}:
+            self.displayMap()
             return
 
         if choice == "3":
@@ -228,14 +257,14 @@ class game:
             self.activeGhostObjectName = None
             self.state = "EXPLORATION"
         else:
-            print("Invalid choice.")
+            print("\nInvalid choice.\n")
 
     def processGhostCounterattack(self):
         """Allow the active ghost to attack after the player's turn."""
         if self.activeGhost is None or self.activeGhost.health <= 0:
             return
 
-        print(f"The {self.activeGhost.name} counterattacks!")
+        print(f"\nThe {self.activeGhost.name} counterattacks!")
         self.activeGhost.attack(self.player)
 
         if self.player.health <= 0:
@@ -268,7 +297,10 @@ class game:
             currentRoom.isCleared = False
 
     def completeClearedRoom(self, currentRoom):
-        print(f"\n* Click * The lights in {currentRoom.roomName} flicker on! The room is cleared.")
+        print(
+            f"\n* Click * The lights in {currentRoom.roomName} flicker on! "
+            "The room is cleared.\n"
+        )
         self.checkLevelProgression()
 
     def save(self, filePath=None):
@@ -285,10 +317,10 @@ class game:
             )
         except (SaveFileError, TypeError) as error:
             self.saveId = previousSaveId
-            print(f"Unable to save the game: {error}")
+            print(f"\nUnable to save the game: {error}\n")
             return False
 
-        print(f"Game saved successfully in save #{self.saveId}.")
+        print(f"\nGame saved successfully in save #{self.saveId}.\n")
         return True
                 
 

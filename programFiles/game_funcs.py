@@ -264,9 +264,10 @@ def load_game(save_id, file_path=None):
 def _choose_character():
     while True:
         print("\nChoose your main character:")
+        print()
         print("1) Mario")
         print("2) Luigi")
-        choice = input("Select an option: ").strip().lower()
+        choice = input("\nSelect an option: ").strip().lower()
 
         if choice in {"1", "m", "mario"}:
             return mario()
@@ -287,6 +288,7 @@ def _select_save():
         return None
 
     print("\nSelect a save:")
+    print()
     for menu_number, save in enumerate(saves, start=1):
         print(
             f"{menu_number}) {save['character']} - "
@@ -295,7 +297,7 @@ def _select_save():
     print("B) Back")
 
     while True:
-        choice = input("Select a save: ").strip().lower()
+        choice = input("\nSelect a save: ").strip().lower()
         if choice in {"b", "back"}:
             return None
 
@@ -329,11 +331,12 @@ def menu():
         print("\n==================================================")
         print("      LUIGI'S MANSION: TERMINAL ADVENTURE")
         print("==================================================")
+        print()
         print("1) New Save")
         print("2) Select Save")
         print("3) Exit")
 
-        choice = input("Select an option: ").strip().lower()
+        choice = input("\nSelect an option: ").strip().lower()
 
         if choice in {"1", "new", "new save"}:
             new_game = game(player=_choose_character())
@@ -354,7 +357,7 @@ def menu():
             continue
 
         if choice in {"3", "exit", "quit"}:
-            print("Goodbye!")
+            print("\nGoodbye!\n")
             raise SystemExit(0)
 
         print("Invalid choice. Enter 1, 2, or 3.")

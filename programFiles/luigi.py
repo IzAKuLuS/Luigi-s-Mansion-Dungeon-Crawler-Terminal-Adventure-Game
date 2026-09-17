@@ -106,14 +106,15 @@ class luigi(character):
         return False
 
     def getInventory(self):
-        print("Inventory:")
+        print("\nInventory:")
+        print()
         print("Hearts:")
         print("  Small Hearts: " + self.describeItemSlots("hearts", "smallHearts"))
         print("  Large Hearts: " + self.describeItemSlots("hearts", "largeHearts"))
         print("Armor:")
         print("  Small Armor: " + self.describeArmorSlots("smallArmor"))
         print("  Large Armor: " + self.describeArmorSlots("largeArmor"))
-        print("Use an item with 'use [item name]'.")
+        print("\nUse an item with 'use [item name]'.\n")
 
     def describeItemSlots(self, category, itemType):
         descriptions = [
