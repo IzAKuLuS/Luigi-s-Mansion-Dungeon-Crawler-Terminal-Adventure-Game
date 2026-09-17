@@ -21,6 +21,7 @@ class game:
         self.activeGhost = None
         self.activeGhostObjectName = None
         self.saveId = None
+        self.saveName = None
 
     # This function initializes the game and loads the first level
     def start(self):
@@ -320,7 +321,7 @@ class game:
             print(f"\nUnable to save the game: {error}\n")
             return False
 
-        print(f"\nGame saved successfully in save #{self.saveId}.\n")
+        print(f"\nGame '{self.saveName}' saved successfully.\n")
         return True
                 
 

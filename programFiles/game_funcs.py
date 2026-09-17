@@ -106,6 +106,17 @@ def _empty_save_document():
     return {"version": 1, "saves": []}
 
 
+def _get_save_name(record):
+    """Return a saved name, including a fallback for older save records."""
+    save_name = record.get("save_name")
+    if isinstance(save_name, str) and save_name.strip():
+        return save_name.strip()
+
+    character_name = record.get("character", "Unknown")
+    save_id = record.get("save_id", "?")
+    return f"{character_name} Save #{save_id}"
+
+
 def _read_save_document(file_path=None):
     path = Path(SAVE_FILE if file_path is None else file_path)
     if not path.exists():
@@ -168,8 +179,13 @@ def save_game(game_instance, save_id=None, file_path=None):
             save_id += 1
 
         game_instance.saveId = save_id
+        save_name = getattr(game_instance, "saveName", None)
+        if not isinstance(save_name, str) or not save_name.strip():
+            save_name = f"{game_instance.player.name} Save #{save_id}"
+        game_instance.saveName = save_name.strip()
         record = {
             "save_id": save_id,
+            "save_name": game_instance.saveName,
             "character": game_instance.player.name,
             "level": game_instance.currentLevelNumber,
             "created_at": now,
@@ -191,8 +207,13 @@ def save_game(game_instance, save_id=None, file_path=None):
             raise SaveFileError(f"Save #{save_id} does not exist.")
 
         game_instance.saveId = save_id
+        save_name = getattr(game_instance, "saveName", None)
+        if not isinstance(save_name, str) or not save_name.strip():
+            save_name = _get_save_name(record)
+        game_instance.saveName = save_name.strip()
         record.update(
             {
+                "save_name": game_instance.saveName,
                 "character": game_instance.player.name,
                 "level": game_instance.currentLevelNumber,
                 "updated_at": now,
@@ -202,6 +223,21 @@ def save_game(game_instance, save_id=None, file_path=None):
 
     _write_save_document(document, file_path)
     return save_id
+
+
+def delete_save(save_id, file_path=None):
+    """Delete a save record and return its display name."""
+    document = _read_save_document(file_path)
+    saves = document["saves"]
+
+    for index, record in enumerate(saves):
+        if isinstance(record, dict) and record.get("save_id") == save_id:
+            save_name = _get_save_name(record)
+            del saves[index]
+            _write_save_document(document, file_path)
+            return save_name
+
+    raise SaveFileError(f"Save #{save_id} does not exist.")
 
 
 def list_saves(file_path=None):
@@ -215,6 +251,7 @@ def list_saves(file_path=None):
         summaries.append(
             {
                 "save_id": record["save_id"],
+                "save_name": _get_save_name(record),
                 "character": record.get("character", "Unknown"),
                 "level": record.get("level", "Unknown"),
                 "updated_at": record.get("updated_at", "Unknown"),
@@ -244,6 +281,7 @@ def load_game(save_id, file_path=None):
         raise SaveFileError(f"Save #{save_id} does not contain a game instance.")
 
     restored_game.saveId = save_id
+    restored_game.saveName = _get_save_name(record)
 
     # Serialization stores objects by value. Relink an in-progress encounter
     # to the ghost in its room so saving during combat preserves one shared
@@ -276,6 +314,15 @@ def _choose_character():
         print("Invalid choice. Enter 1 for Mario or 2 for Luigi.")
 
 
+def _choose_save_name():
+    """Ask for a non-empty name for a new save."""
+    while True:
+        save_name = input("\nEnter a name for this save: ").strip()
+        if save_name:
+            return save_name
+        print("Save names cannot be empty.")
+
+
 def _select_save():
     try:
         saves = list_saves()
@@ -291,7 +338,7 @@ def _select_save():
     print()
     for menu_number, save in enumerate(saves, start=1):
         print(
-            f"{menu_number}) {save['character']} - "
+            f"{menu_number}) {save['save_name']} - {save['character']} - "
             f"Floor {save['level']} - Last saved {save['updated_at']}"
         )
     print("B) Back")
@@ -318,13 +365,68 @@ def _select_save():
             return None
 
 
+def _delete_save_menu():
+    """Let the player select and confirm a save-file deletion."""
+    try:
+        saves = list_saves()
+    except SaveFileError as error:
+        print(f"Unable to open the save file: {error}")
+        return
+
+    if not saves:
+        print("\nNo saved games were found.")
+        return
+
+    print("\nDelete a save:")
+    print()
+    for menu_number, save in enumerate(saves, start=1):
+        print(
+            f"{menu_number}) {save['save_name']} - {save['character']} - "
+            f"Floor {save['level']}"
+        )
+    print("B) Back")
+
+    while True:
+        choice = input("\nSelect a save to delete: ").strip().lower()
+        if choice in {"b", "back"}:
+            return
+
+        try:
+            menu_number = int(choice)
+        except ValueError:
+            print("Invalid choice. Enter a save number or B to go back.")
+            continue
+
+        if not 1 <= menu_number <= len(saves):
+            print("Invalid choice. Enter one of the displayed save numbers.")
+            continue
+
+        selected_save = saves[menu_number - 1]
+        confirmation = input(
+            f"Delete '{selected_save['save_name']}' permanently? (y/n): "
+        ).strip().lower()
+
+        if confirmation not in {"y", "yes"}:
+            print("Save deletion cancelled.")
+            return
+
+        try:
+            deleted_name = delete_save(selected_save["save_id"])
+        except SaveFileError as error:
+            print(f"Unable to delete that save: {error}")
+            return
+
+        print(f"\nDeleted save '{deleted_name}'.")
+        return
+
+
 def menu():
     """Display the startup menu and return the chosen game instance.
 
     A new game is immediately recorded in ``game_saves.json``.  Selecting an
-    existing save reconstructs the same object graph that was stored.  Choosing
-    Exit raises ``SystemExit`` so the program ends even if a caller ignores the
-    function's return value.
+    existing save reconstructs the same object graph that was stored. Saves can
+    also be deleted after an explicit confirmation. Choosing Exit raises
+    ``SystemExit`` so the program ends even if a caller ignores the return value.
     """
 
     while True:
@@ -334,30 +436,42 @@ def menu():
         print()
         print("1) New Save")
         print("2) Select Save")
-        print("3) Exit")
+        print("3) Delete Save")
+        print("4) Exit")
 
         choice = input("\nSelect an option: ").strip().lower()
 
         if choice in {"1", "new", "new save"}:
             new_game = game(player=_choose_character())
+            new_game.saveName = _choose_save_name()
             try:
                 save_id = save_game(new_game)
             except SaveFileError as error:
                 print(f"Unable to create the save: {error}")
                 continue
             new_game.saveId = save_id
-            print(f"\nCreated save #{save_id} for {new_game.player.name}.")
+            print(
+                f"\nCreated save '{new_game.saveName}' "
+                f"for {new_game.player.name}."
+            )
             return new_game
 
         if choice in {"2", "select", "select save"}:
             selected_game = _select_save()
             if selected_game is not None:
-                print(f"\nLoaded {selected_game.player.name}'s save.")
+                print(
+                    f"\nLoaded '{selected_game.saveName}' "
+                    f"for {selected_game.player.name}."
+                )
                 return selected_game
             continue
 
-        if choice in {"3", "exit", "quit"}:
+        if choice in {"3", "delete", "delete save"}:
+            _delete_save_menu()
+            continue
+
+        if choice in {"4", "exit", "quit"}:
             print("\nGoodbye!\n")
             raise SystemExit(0)
 
-        print("Invalid choice. Enter 1, 2, or 3.")
+        print("Invalid choice. Enter 1, 2, 3, or 4.")

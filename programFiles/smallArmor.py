@@ -11,4 +11,4 @@ class smallArmor(item):
             "smallArmor",
             SMALL_ARMOR_SLOTS,
         )
-        self.durability = SMALL_ARMOR_DURABILITY
+        self.durability = SMALL_ARMOR_DURABILITY 
