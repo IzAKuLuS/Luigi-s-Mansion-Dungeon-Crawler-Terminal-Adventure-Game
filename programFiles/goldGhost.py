@@ -12,7 +12,11 @@ class goldGhost(ghost):
     def __init__(self):
         super().__init__("Gold Ghost", 30, 1, 1)
 
-    def punch(self, luigi):
+    def attack(self, target):
+        """Attack a target with the Gold Ghost's punch."""
+        return self.punch(target)
+
+    def punch(self, target):
         damage = GOLD_GHOST_BASE_DAMAGE
-        luigi.takeDamage(damage)
-        print(f"{self.name} punches {luigi.name} for {damage} damage!")
+        target.takeDamage(damage)
+        print(f"{self.name} punches {target.name} for {damage} damage!")

@@ -99,13 +99,16 @@ class level:
             # choose an item to place in the hiding spot based on the number of items remaining to be placed
             # more common items are more likely to be placed in the level than rarer items
             # TO-DO: Add more item types to the game
-            if self.numItems % 2 == 0:
-                targetRoom.interactableObjects[spot["interactableName"]]["outcome"] = "smallHeart"
-            elif self.numItems % 2 == 1:
-                targetRoom.interactableObjects[spot["interactableName"]]["outcome"] = "largeHeart"
-            elif self.numItems % 3 == 0:
-                targetRoom.interactableObjects[spot["interactableName"]]["outcome"] = "smallArmor"
-            elif self.numItems % 4 == 0:
-                targetRoom.interactableObjects[spot["interactableName"]]["outcome"] = "largeArmor"
+            match self.numItems % 4:
+                case 0:
+                    outcome = "largeArmor"
+                case 1:
+                    outcome = "largeHeart"
+                case 2:
+                    outcome = "smallHeart"
+                case 3:
+                    outcome = "smallArmor"
+
+            targetRoom.interactableObjects[spot["interactableName"]]["outcome"] = outcome
 
             self.numItems -= 1

@@ -29,4 +29,9 @@ class character:
     def getSkill(self):
         return self.skill
 
+    def attack(self, target):
+        """Attack a target using the move supplied by a subclass."""
+        raise NotImplementedError(
+            f"{type(self).__name__} must implement the attack() method."
+        )
 

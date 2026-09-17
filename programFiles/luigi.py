@@ -77,7 +77,7 @@ class luigi(character):
 
 
     def addToInventory(self, item):
-        self.placeInSlot(self, item)
+        self.placeInSlot(item)
 
     def getInventory(self):
         print("Inventory:")
@@ -102,6 +102,10 @@ class luigi(character):
             # (i.e. if health is zero, then the game ends.)
             self.health = 0
 
+    def attack(self, enemy):
+        """Attack an enemy with the Poltergust vacuum."""
+        return self.vacuumAttack(enemy)
+
     def vacuumAttack(self, enemy):
         ...# TO-DO: Implement vacuum attack functionality here
 
@@ -121,4 +125,3 @@ class luigi(character):
 
 
     
-

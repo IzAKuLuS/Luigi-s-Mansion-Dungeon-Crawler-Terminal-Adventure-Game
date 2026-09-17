@@ -4,15 +4,17 @@
 import json, sys
 from level import level
 from luigi import luigi
+from ghost import ghost
+from item import item
 
 MAX_LEVEL_COUNT = 4
 
-
+4
 class game:
-    def __init__(self):
+    def __init__(self, player=None):
         self.state = "EXPLORATION"
         self.isRunning = True
-        self.player = luigi()
+        self.player = player if player is not None else luigi()
         self.currentLevelNumber = 1
         self.currentLevel = None
         self.currentRoomName = None
@@ -61,7 +63,7 @@ class game:
             if self.state == "EXPLORATION":
                 self.processExplorationState(currentRoom)
             elif self.state == "COMBAT":
-                self.proccessCombatTurn()
+                self.processCombatTurn()
             elif self.state == "GAME_OVER":
                 print("\nYou got Ghosted! Game Over!")
                 self.isRunning = False
@@ -112,13 +114,13 @@ class game:
                 outcome = result["outcome"]
                 
                 # Check if the outcome is a Ghost object (not a string or None)
-                if outcome is not None and not isinstance(outcome, str):
+                if isinstance(outcome, ghost):
                     self.activeGhost = outcome
                     self.state = "COMBAT"
                     print(f"\nA wild {self.activeGhost.getName()} appears! Prepare for battle!")
                     
                 # Check if the outcome is an Item object / string 
-                elif outcome is not None:
+                elif isinstance(outcome, item):
                     print(f"You found an item: {outcome}!")
                     # Use Luigi's built-in inventory routing method from luigi.py
                     self.player.addToInventory(outcome)
@@ -156,8 +158,8 @@ class game:
                     # TO-DO: Implement the vacuum attack method (it is currently unfinished in luigi.py)
                     #        # TO-DO: Implement a probability system that determines how much damage the ghost
                     #        # takes based on a variety of factors
-                    # Trigger Luigi's vacuum attack once implemented
-                    self.player.vacuumAttack(self.activeGhost)
+                    # Use the selected character's attack implementation.
+                    self.player.attack(self.activeGhost)
                     self.activeGhost = None
                     self.state = "EXPLORATION"
                 elif choice == "2":

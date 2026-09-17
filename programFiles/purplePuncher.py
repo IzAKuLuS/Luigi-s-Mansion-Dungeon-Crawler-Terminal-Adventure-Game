@@ -14,12 +14,17 @@ class purplePuncher(ghost):
     def __init__(self):
         super().__init__("Purple Puncher", 50, 2, 2)
 
-    def softPunch(self, luigi):
-        damage = PURPLE_PUNCHER_BASE_DAMAGE + self.skill * random.randint(1, 3)
-        luigi.takeDamage(damage)
-        print(f"{self.name} punches {luigi.name} for {damage} damage!")
+    def attack(self, target):
+        """Attack a target with a randomly selected punch."""
+        selected_attack = random.choice((self.softPunch, self.hardPunch))
+        return selected_attack(target)
 
-    def hardPunch(self, luigi):
+    def softPunch(self, target):
+        damage = PURPLE_PUNCHER_BASE_DAMAGE + self.skill * random.randint(1, 3)
+        target.takeDamage(damage)
+        print(f"{self.name} punches {target.name} for {damage} damage!")
+
+    def hardPunch(self, target):
         damage = PURPLE_PUNCHER_BASE_DAMAGE + self.skill * random.randint(5, 10)
-        luigi.takeDamage(damage)
-        print(f"{self.name} lands a left hook onto {luigi.name} for {damage} damage! It's extra painful!")
+        target.takeDamage(damage)
+        print(f"{self.name} lands a left hook onto {target.name} for {damage} damage! It's extra painful!")
