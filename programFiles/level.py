@@ -15,6 +15,10 @@ import random
 from room import room
 from goldGhost import goldGhost
 from purplePuncher import purplePuncher
+from smallHeart import smallHeart
+from largeHeart import largeHeart
+from smallArmor import smallArmor
+from largeArmor import largeArmor
 
 class level:
     def __init__(self, levelName, roomBlueprints, numGhosts, numItems):
@@ -101,13 +105,13 @@ class level:
             # TO-DO: Add more item types to the game
             match self.numItems % 4:
                 case 0:
-                    outcome = "largeArmor"
+                    outcome = largeArmor()
                 case 1:
-                    outcome = "largeHeart"
+                    outcome = largeHeart()
                 case 2:
-                    outcome = "smallHeart"
+                    outcome = smallHeart()
                 case 3:
-                    outcome = "smallArmor"
+                    outcome = smallArmor()
 
             targetRoom.interactableObjects[spot["interactableName"]]["outcome"] = outcome
 

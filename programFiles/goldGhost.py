@@ -18,5 +18,5 @@ class goldGhost(ghost):
 
     def punch(self, target):
         damage = GOLD_GHOST_BASE_DAMAGE
-        target.takeDamage(damage)
-        print(f"{self.name} punches {target.name} for {damage} damage!")
+        damageDealt = target.takeDamage(damage)
+        print(f"{self.name} punches {target.name} for {damageDealt} damage!")

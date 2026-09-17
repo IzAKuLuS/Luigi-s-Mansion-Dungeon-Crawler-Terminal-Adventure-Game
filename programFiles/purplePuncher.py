@@ -21,10 +21,10 @@ class purplePuncher(ghost):
 
     def softPunch(self, target):
         damage = PURPLE_PUNCHER_BASE_DAMAGE + self.skill * random.randint(1, 3)
-        target.takeDamage(damage)
-        print(f"{self.name} punches {target.name} for {damage} damage!")
+        damageDealt = target.takeDamage(damage)
+        print(f"{self.name} punches {target.name} for {damageDealt} damage!")
 
     def hardPunch(self, target):
         damage = PURPLE_PUNCHER_BASE_DAMAGE + self.skill * random.randint(5, 10)
-        target.takeDamage(damage)
-        print(f"{self.name} lands a left hook onto {target.name} for {damage} damage! It's extra painful!")
+        damageDealt = target.takeDamage(damage)
+        print(f"{self.name} lands a left hook onto {target.name} for {damageDealt} damage! It's extra painful!")

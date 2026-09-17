@@ -19,6 +19,7 @@ class game:
         self.currentLevel = None
         self.currentRoomName = None
         self.activeGhost = None
+        self.activeGhostObjectName = None
 
     # This function initializes the game and loads the first level
     def start(self):
@@ -74,7 +75,11 @@ class game:
     def processExplorationState(self, currentRoom):
 
         print("\n--------------------------------------------------")
-        print(f"Location: {currentRoom.roomName} (Floor {currentRoom.floor}) | Luigi HP: {self.player.health} | Armor: {self.player.armor}")
+        print(
+            f"Location: {currentRoom.roomName} (Floor {currentRoom.floor}) | "
+            f"{self.player.name} HP: {self.player.health} | "
+            f"Armor: {self.player.getArmorStatus()}"
+        )
         print(currentRoom.getRoomDescription())
 
         print("\nObjects you can inspect:")
@@ -116,19 +121,23 @@ class game:
                 # Check if the outcome is a Ghost object (not a string or None)
                 if isinstance(outcome, ghost):
                     self.activeGhost = outcome
+                    self.activeGhostObjectName = noun
                     self.state = "COMBAT"
                     print(f"\nA wild {self.activeGhost.getName()} appears! Prepare for battle!")
                     
                 # Check if the outcome is an Item object / string 
                 elif isinstance(outcome, item):
-                    print(f"You found an item: {outcome}!")
+                    print(f"You found an item: {outcome.name}!")
                     # Use Luigi's built-in inventory routing method from luigi.py
                     self.player.addToInventory(outcome)
                     
             # Check if clearing this object finished the room
-            if currentRoom.isCleared:
-                print(f"\n* Click * The lights in {currentRoom.roomName} flicker on! The room is cleared.")
-                self.checkLevelProgression()
+            if (
+                result["status"] == "success"
+                and currentRoom.isCleared
+                and self.state != "COMBAT"
+            ):
+                self.completeClearedRoom(currentRoom)
                 
         elif verb == "move" or verb == "go":
             if not noun:
@@ -145,32 +154,71 @@ class game:
             print("Unknown command. Try 'inspect [object]', 'move [room]', 'inventory', 'look', or 'quit'.")
 
     def processCombatTurn(self):
-                print("\n*** BATTLE MODE ***")
-                # TO-DO: Implement a function that will print to the screen an image of a ghost based on the ghost's name.
-                #        Instantiate it here so that when a battle occurs the player can see what they are fighting.
-                
-                print(f"Luigi HP: {self.player.health} | Armor: {self.player.armor}")
-                
-                choice = input("Choose action: [1] Vacuum Attack [2] Run: ").strip()
-                
-                if choice == "1":
-                    print("You flash the ghost with your Poltergust and pull!")
-                    # TO-DO: Implement the vacuum attack method (it is currently unfinished in luigi.py)
-                    #        # TO-DO: Implement a probability system that determines how much damage the ghost
-                    #        # takes based on a variety of factors
-                    # Use the selected character's attack implementation.
-                    self.player.attack(self.activeGhost)
-                    self.activeGhost = None
-                    self.state = "EXPLORATION"
-                elif choice == "2":
-                    # TO-DO: Implement a probability system for determining if Luigi can successfully escape the ghost's attack.
-                    # - If successful, the ghost is tired and loses some of its health
-                    # - if failed, the ghost attacks luigi first
-                    print("You managed to scramble away! That ghost looks tired...")
-                    self.activeGhost = None
-                    self.state = "EXPLORATION"
-                else:
-                    print("Invalid choice.")
+        if self.activeGhost is None:
+            self.state = "EXPLORATION"
+            return
+
+        print("\n*** BATTLE MODE ***")
+        print(
+            f"{self.player.name} HP: {self.player.health} | "
+            f"Armor: {self.player.getArmorStatus()} | "
+            f"{self.activeGhost.name} HP: {self.activeGhost.health}"
+        )
+
+        choice = input("Choose action: [1] Vacuum Attack [2] Run: ").strip().lower()
+
+        if choice in {"1", "attack", "vacuum", "vacuum attack"}:
+            print("You flash the ghost with your Poltergust and pull!")
+            self.player.attack(self.activeGhost)
+
+            if self.activeGhost.health <= 0:
+                defeated_ghost_name = self.activeGhost.name
+                print(f"You captured the {defeated_ghost_name}!")
+                self.finishCombat()
+                return
+
+            print(f"The {self.activeGhost.name} counterattacks!")
+            self.activeGhost.attack(self.player)
+
+            if self.player.health <= 0:
+                self.state = "GAME_OVER"
+
+        elif choice in {"2", "run", "flee"}:
+            print("You managed to scramble away! The ghost returns to its hiding spot.")
+            self.returnGhostToHidingSpot()
+            self.activeGhost = None
+            self.activeGhostObjectName = None
+            self.state = "EXPLORATION"
+        else:
+            print("Invalid choice.")
+
+    def finishCombat(self):
+        """End a won battle and process any resulting room completion."""
+        currentRoom = self.currentLevel.rooms[self.currentRoomName]
+        hidingSpotName = getattr(self, "activeGhostObjectName", None)
+
+        if hidingSpotName in currentRoom.interactableObjects:
+            currentRoom.interactableObjects[hidingSpotName]["outcome"] = None
+
+        self.activeGhost = None
+        self.activeGhostObjectName = None
+        self.state = "EXPLORATION"
+
+        if currentRoom.isCleared:
+            self.completeClearedRoom(currentRoom)
+
+    def returnGhostToHidingSpot(self):
+        """Make a fled encounter available to discover and fight again."""
+        currentRoom = self.currentLevel.rooms[self.currentRoomName]
+        hidingSpotName = getattr(self, "activeGhostObjectName", None)
+
+        if hidingSpotName in currentRoom.interactableObjects:
+            currentRoom.interactableObjects[hidingSpotName]["isSearched"] = False
+            currentRoom.isCleared = False
+
+    def completeClearedRoom(self, currentRoom):
+        print(f"\n* Click * The lights in {currentRoom.roomName} flicker on! The room is cleared.")
+        self.checkLevelProgression()
                 
 
     def checkLevelProgression(self):
