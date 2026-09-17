@@ -167,6 +167,7 @@ def save_game(game_instance, save_id=None, file_path=None):
         while save_id in used_ids:
             save_id += 1
 
+        game_instance.saveId = save_id
         record = {
             "save_id": save_id,
             "character": game_instance.player.name,
@@ -189,6 +190,7 @@ def save_game(game_instance, save_id=None, file_path=None):
         if record is None:
             raise SaveFileError(f"Save #{save_id} does not exist.")
 
+        game_instance.saveId = save_id
         record.update(
             {
                 "character": game_instance.player.name,
@@ -240,6 +242,22 @@ def load_game(save_id, file_path=None):
     restored_game = _deserialize(record.get("game"))
     if not isinstance(restored_game, game):
         raise SaveFileError(f"Save #{save_id} does not contain a game instance.")
+
+    restored_game.saveId = save_id
+
+    # Serialization stores objects by value. Relink an in-progress encounter
+    # to the ghost in its room so saving during combat preserves one shared
+    # source of health and encounter state.
+    if restored_game.state == "COMBAT":
+        room_name = getattr(restored_game, "currentRoomName", None)
+        object_name = getattr(restored_game, "activeGhostObjectName", None)
+        current_level = getattr(restored_game, "currentLevel", None)
+        if current_level is not None and room_name in current_level.rooms:
+            current_room = current_level.rooms[room_name]
+            object_data = current_room.interactableObjects.get(object_name)
+            if object_data is not None and isinstance(object_data.get("outcome"), ghost):
+                restored_game.activeGhost = object_data["outcome"]
+
     return restored_game
 
 
@@ -324,6 +342,7 @@ def menu():
             except SaveFileError as error:
                 print(f"Unable to create the save: {error}")
                 continue
+            new_game.saveId = save_id
             print(f"\nCreated save #{save_id} for {new_game.player.name}.")
             return new_game
 

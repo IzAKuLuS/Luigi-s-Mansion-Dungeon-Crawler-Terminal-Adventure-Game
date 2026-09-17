@@ -67,14 +67,60 @@ class luigi(character):
     def addToInventory(self, foundItem):
         return self.placeInSlot(foundItem)
 
+    @staticmethod
+    def normalizeItemName(itemName):
+        return "".join(character for character in itemName.lower() if character.isalnum())
+
+    def findInventoryItem(self, requestedName):
+        """Find an inventory item by its display name or item type."""
+        normalizedRequest = self.normalizeItemName(requestedName)
+
+        for category in self.inventory.values():
+            for slots in category.values():
+                for index, storedItem in enumerate(slots):
+                    if storedItem is None:
+                        continue
+
+                    validNames = {
+                        self.normalizeItemName(storedItem.name),
+                        self.normalizeItemName(storedItem.itemType),
+                        self.normalizeItemName(storedItem.name + "s"),
+                    }
+                    if normalizedRequest in validNames:
+                        return storedItem, slots, index
+
+        return None
+
+    def useInventoryItem(self, requestedName):
+        """Use a named inventory item and remove it when it is consumed."""
+        inventoryEntry = self.findInventoryItem(requestedName)
+        if inventoryEntry is None:
+            print(f"You do not have '{requestedName}' in your inventory.")
+            return False
+
+        inventoryItem, slots, index = inventoryEntry
+        if self.useItem(inventoryItem):
+            slots[index] = None
+            return True
+
+        return False
+
     def getInventory(self):
         print("Inventory:")
         print("Hearts:")
-        print("  Small Hearts: " + str(self.inventory["hearts"]["smallHearts"]))
-        print("  Large Hearts: " + str(self.inventory["hearts"]["largeHearts"]))
+        print("  Small Hearts: " + self.describeItemSlots("hearts", "smallHearts"))
+        print("  Large Hearts: " + self.describeItemSlots("hearts", "largeHearts"))
         print("Armor:")
         print("  Small Armor: " + self.describeArmorSlots("smallArmor"))
         print("  Large Armor: " + self.describeArmorSlots("largeArmor"))
+        print("Use an item with 'use [item name]'.")
+
+    def describeItemSlots(self, category, itemType):
+        descriptions = [
+            storedItem.name if storedItem is not None else "Empty"
+            for storedItem in self.inventory[category][itemType]
+        ]
+        return str(descriptions)
 
     def describeArmorSlots(self, armorType):
         descriptions = []
@@ -155,11 +201,31 @@ class luigi(character):
         print(f"{self.name} vacuums {enemy.name} for {damage} damage!")
         return damage
 
-    def useItem(self, item):
-        if (item.type == "heart"):
-            self.addHealth(item.value)
-        elif (item.type == "armor"):
-            self.armor = self.armor + item.value
+    def useItem(self, inventoryItem):
+        """Apply an item's effect using its itemType and magnitude."""
+        if inventoryItem.itemType in {"smallHeart", "largeHeart"}:
+            if self.health >= 100:
+                print("Your health is already full.")
+                return False
+
+            previousHealth = self.health
+            self.addHealth(inventoryItem.magnitude)
+            restoredHealth = self.health - previousHealth
+            print(
+                f"You used {inventoryItem.name} and restored "
+                f"{restoredHealth} health."
+            )
+            return True
+
+        if inventoryItem.itemType in {"smallArmor", "largeArmor"}:
+            print(
+                f"{inventoryItem.name} is equipped automatically and has "
+                f"{inventoryItem.durability} hits remaining."
+            )
+            return False
+
+        print(f"{inventoryItem.name} cannot be used.")
+        return False
 
     
 

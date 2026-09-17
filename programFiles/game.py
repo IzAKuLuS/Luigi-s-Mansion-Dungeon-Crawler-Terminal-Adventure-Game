@@ -20,6 +20,7 @@ class game:
         self.currentRoomName = None
         self.activeGhost = None
         self.activeGhostObjectName = None
+        self.saveId = None
 
     # This function initializes the game and loads the first level
     def start(self):
@@ -88,7 +89,11 @@ class game:
             print(f" - {objectName} {status}")
             
         # Get player input
-        userInput = input("\nWhat would you like to do? (e.g., 'inspect [object]', 'move [room]', 'inventory', 'quit'): ").strip().lower()
+        userInput = input(
+            "\nWhat would you like to do? "
+            "(e.g., 'inspect [object]', 'move [room]', 'inventory', "
+            "'use [item]', 'save', 'quit'): "
+        ).strip().lower()
         parts = userInput.split(" ", 1)
         
         verb = parts[0] if len(parts) > 0 else ""
@@ -105,6 +110,15 @@ class game:
             
         elif verb == "inventory":
             self.player.getInventory()
+
+        elif verb == "use":
+            if not noun:
+                print("Specify an item to use.")
+                return
+            self.player.useInventoryItem(noun)
+
+        elif verb == "save":
+            self.save()
             
         elif verb == "inspect":
             if not noun:
@@ -151,7 +165,10 @@ class game:
             else:
                 print(f"You cannot reach '{noun}' from here or it doesn't exist. Try again.")
         else:
-            print("Unknown command. Try 'inspect [object]', 'move [room]', 'inventory', 'look', or 'quit'.")
+            print(
+                "Unknown command. Try 'inspect [object]', 'move [room]', "
+                "'inventory', 'use [item]', 'save', 'look', or 'quit'."
+            )
 
     def processCombatTurn(self):
         if self.activeGhost is None:
@@ -165,7 +182,32 @@ class game:
             f"{self.activeGhost.name} HP: {self.activeGhost.health}"
         )
 
-        choice = input("Choose action: [1] Vacuum Attack [2] Run: ").strip().lower()
+        choice = input(
+            "Choose action: [1] Vacuum Attack [2] Run "
+            "[3] Use Item [4] Save [5] Inventory: "
+        ).strip().lower()
+
+        if choice in {"4", "save"}:
+            self.save()
+            return
+
+        if choice in {"5", "inventory"}:
+            self.player.getInventory()
+            return
+
+        if choice == "3":
+            requestedItem = input("Which item would you like to use? ").strip()
+            itemWasUsed = self.player.useInventoryItem(requestedItem)
+            if itemWasUsed:
+                self.processGhostCounterattack()
+            return
+
+        if choice.startswith("use "):
+            requestedItem = choice.split(" ", 1)[1]
+            itemWasUsed = self.player.useInventoryItem(requestedItem)
+            if itemWasUsed:
+                self.processGhostCounterattack()
+            return
 
         if choice in {"1", "attack", "vacuum", "vacuum attack"}:
             print("You flash the ghost with your Poltergust and pull!")
@@ -177,11 +219,7 @@ class game:
                 self.finishCombat()
                 return
 
-            print(f"The {self.activeGhost.name} counterattacks!")
-            self.activeGhost.attack(self.player)
-
-            if self.player.health <= 0:
-                self.state = "GAME_OVER"
+            self.processGhostCounterattack()
 
         elif choice in {"2", "run", "flee"}:
             print("You managed to scramble away! The ghost returns to its hiding spot.")
@@ -192,6 +230,17 @@ class game:
         else:
             print("Invalid choice.")
 
+    def processGhostCounterattack(self):
+        """Allow the active ghost to attack after the player's turn."""
+        if self.activeGhost is None or self.activeGhost.health <= 0:
+            return
+
+        print(f"The {self.activeGhost.name} counterattacks!")
+        self.activeGhost.attack(self.player)
+
+        if self.player.health <= 0:
+            self.state = "GAME_OVER"
+
     def finishCombat(self):
         """End a won battle and process any resulting room completion."""
         currentRoom = self.currentLevel.rooms[self.currentRoomName]
@@ -199,6 +248,8 @@ class game:
 
         if hidingSpotName in currentRoom.interactableObjects:
             currentRoom.interactableObjects[hidingSpotName]["outcome"] = None
+
+        currentRoom.isRoomCleared()
 
         self.activeGhost = None
         self.activeGhostObjectName = None
@@ -219,6 +270,26 @@ class game:
     def completeClearedRoom(self, currentRoom):
         print(f"\n* Click * The lights in {currentRoom.roomName} flicker on! The room is cleared.")
         self.checkLevelProgression()
+
+    def save(self, filePath=None):
+        """Save the current game into its existing save slot."""
+        # Imported here to avoid the module-level game/game_funcs import cycle.
+        from game_funcs import SaveFileError, save_game
+
+        previousSaveId = getattr(self, "saveId", None)
+        try:
+            self.saveId = save_game(
+                self,
+                save_id=previousSaveId,
+                file_path=filePath,
+            )
+        except (SaveFileError, TypeError) as error:
+            self.saveId = previousSaveId
+            print(f"Unable to save the game: {error}")
+            return False
+
+        print(f"Game saved successfully in save #{self.saveId}.")
+        return True
                 
 
     def checkLevelProgression(self):
